@@ -21,6 +21,7 @@ Each skill is a self-contained directory with a `SKILL.md`. Drop it (or symlink 
 ### Productivity
 
 - **[`/handoff`](./skills/productivity/handoff/SKILL.md)** + **[`/resume`](./skills/productivity/resume/SKILL.md)** — compact a session into a structured handoff document, then pick it up in a new session with a drift check against the recorded git state. Paired by design.
+- **[`/assignment`](./skills/productivity/assignment/SKILL.md)** — complete a course assignment from its attached files: read every instruction down to naming and format, do and run the work, put the deliverables in `submission/`, verify with a diff against the starter plus a fresh-eyes grader agent, then file the workspace into its course folder. Personal details (name, school folder, courses) live in a gitignored `profile.md`; copy `profile.example.md` to start.
 - **[`/grill-me`](./skills/productivity/grill-me/SKILL.md)** — interview-style agent that walks every branch of a plan or design until you reach shared understanding. Tiny skill, outsized impact.
 
 ### Engineering

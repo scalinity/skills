@@ -22,6 +22,9 @@ __pycache__/
 *.tmp
 *.local
 
+# Personal skill profiles (copy profile.example.md to profile.md)
+skills/productivity/assignment/profile.md
+
 # Skill-specific runtime artifacts
 skills/research/last30days/.cache/
 skills/research/last30days/output/
