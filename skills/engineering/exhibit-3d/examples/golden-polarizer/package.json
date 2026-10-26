@@ -1,0 +1,28 @@
+{
+  "name": "polarizer-bench",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "vite build",
+    "build:single": "vite build --mode single",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "capture": "node $HOME/.claude/skills/exhibit-3d/scripts/capture.mjs http://localhost:5174/ --out qa",
+    "physics": "node scripts/physics-probe.mjs http://localhost:5174/ qa/physics-observations.md"
+  },
+  "dependencies": {
+    "three": "0.186.1",
+    "@fontsource-variable/outfit": "5.3.0",
+    "@fontsource/dm-mono": "5.3.0"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "playwright": "1.64.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "vite-plugin-singlefile": "2.3.3",
+    "vitest": "5.0.3"
+  }
+}

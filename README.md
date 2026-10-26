@@ -26,6 +26,7 @@ Each skill is a self-contained directory with a `SKILL.md`. Drop it (or symlink 
 
 ### Engineering
 
+- **[`/exhibit-3d`](./skills/engineering/exhibit-3d/SKILL.md)** — build interactive 3D science exhibits with a reusable Three.js/WebGPU kit, physics checks, capture tools and a native macOS viewer. Includes a golden example and visual references; see its [third-party image notice](./skills/engineering/exhibit-3d/THIRD_PARTY.md).
 - **[`/review-2`](./skills/engineering/review-2/SKILL.md)** / **[`/review-5`](./skills/engineering/review-5/SKILL.md)** / **[`/review-orchestrator`](./skills/engineering/review-orchestrator/SKILL.md)** — multi-agent, read-only code review. Three sizes for three changeset scales (2, 5, or 10 parallel reviewers). Includes severity calibration, false-positive guards, reachability traces for critical findings, and corroboration tagging across agents.
 - **[`/readme`](./skills/engineering/readme/SKILL.md)** — generate a portfolio-quality README from a project's specs, ADRs, and detected stack. Two-pass review against the codebase before committing.
 - **[`/terminal-ui-design`](./skills/engineering/terminal-ui-design/SKILL.md)** — build distinctive, production-grade TUIs that avoid generic terminal aesthetics.
@@ -45,4 +46,4 @@ Each skill is a self-contained directory with a `SKILL.md`. Drop it (or symlink 
 
 ## License
 
-MIT.
+MIT, except for the third-party reference screenshots bundled with `exhibit-3d`. See the [third-party image notice](./skills/engineering/exhibit-3d/THIRD_PARTY.md) for their status.

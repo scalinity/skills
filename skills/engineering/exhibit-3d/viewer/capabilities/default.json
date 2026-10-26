@@ -1,0 +1,7 @@
+{
+  "identifier": "default",
+  "description": "The exhibit page may move the window by its top strip, and zoom it with a double-click there.",
+  "windows": ["main"],
+  "remote": { "urls": ["http://localhost:*", "http://127.0.0.1:*"] },
+  "permissions": ["core:window:allow-start-dragging", "core:window:allow-internal-toggle-maximize"]
+}
