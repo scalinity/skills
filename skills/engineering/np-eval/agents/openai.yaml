@@ -1,0 +1,4 @@
+interface:
+  display_name: "NativePeers Evaluation"
+  short_description: "Score sessions and aggregate NativePeers gaps"
+  default_prompt: "Use $np-eval to evaluate this session and save its evidence, score and actionable gaps."

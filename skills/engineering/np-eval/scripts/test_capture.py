@@ -1,0 +1,152 @@
+"""Cost coverage, overlap and command transparency using disposable records only."""
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+SCRIPT = Path(__file__).with_name("capture.py")
+SPEC = importlib.util.spec_from_file_location("capture", SCRIPT)
+CAPTURE = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(CAPTURE)
+
+
+class Clock:
+    def __init__(self): self.now = 100
+    def monotonic(self): return self.now
+    def time(self): return 1700000000 + self.now
+
+
+class CaptureTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.path = Path(self.temp.name) / "cost.jsonl"
+        self.clock = Clock()
+        CAPTURE.start(self.path, "native-parent", "useful review", ["pre-start work unknown"], self.clock)
+
+    def tearDown(self): self.temp.cleanup()
+
+    def event(self, kind, phase, offset, duration, **extra):
+        e = dict(kind=kind, phase=phase, offset_seconds=offset, duration_seconds=duration, source="fixture")
+        if kind == "worker":e['attempt_index']=0
+        e.update(extra)
+        CAPTURE.record(self.path, e)
+        return e
+
+    def test_failed_setup_repeated_reads_interventions_and_concurrency(self):
+        for phase, offset, duration, exit_code in [("preparation", 0, 2, 127), ("preparation", 2, 3, 2), ("dispatch", 5, 1, 0), ("wait", 6, 10, 0), ("collection", 16, 2, 0), ("collection", 18, 1, 0), ("integration", 19, 3, 0)]:
+            self.event("command", phase, offset, duration, stdout_bytes=10, stderr_bytes=2, exit_code=exit_code)
+        worker = self.event("worker", "dispatch", 6, 10, task_id="task-a", group_id="group", completion_phase=1, native_rounds=4)
+        CAPTURE.record(self.path, worker)
+        self.event("worker", "dispatch", 8, 5, task_id="task-b", native_rounds=3)
+        for reason in ["fix selection", "repeat read"]:
+            self.event("intervention", "preparation", 0, None, description=reason, attribution="agent")
+        self.event("command", "integration", 22, 50, stdout_bytes=1000, stderr_bytes=0, excluded=True)
+        self.clock.now = 180
+        s = CAPTURE.summary(self.path, self.clock)
+        self.assertEqual(s["metrics"], dict(setup_tool_calls=2, result_bytes=84, orchestration_seconds=12, native_rounds=7))
+        self.assertEqual(s["measurements"]["worker_duration_sum_seconds"], 15)
+        self.assertEqual(s["measurements"]["worker_interval_union_seconds"], 10)
+        self.assertEqual(s["measurements"]["wait_interval_union_seconds"], 10)
+        self.assertEqual(s["measurements"]["observation_window_seconds"], 72)
+        self.assertIsNone(s["measurements"]["observed_parent_effort_seconds"])
+        self.assertEqual(s["measurements"]["interventions"], 2)
+        self.assertEqual(s["measurements"]["excluded_events"], 1)
+
+    def test_missing_worker_values_and_mcp_coverage_stay_explicit(self):
+        self.event("worker", "dispatch", 1, None, task_id="task", native_rounds=None)
+        self.event("intervention", "collection", 2, None, transport="mcp", description="MCP byte coverage unobserved")
+        s = CAPTURE.summary(self.path, self.clock)
+        self.assertIsNone(s["metrics"]["native_rounds"])
+        self.assertIsNone(s["measurements"]["worker_interval_union_seconds"])
+        self.assertEqual(s["metrics"]["result_bytes"], 0)
+        self.assertTrue(any("no MCP success" in x for x in s["limitations"]))
+
+    def test_unknown_effort_stays_null_and_partial_effort_is_labelled(self):
+        self.event("effort", "integration", 1, None)
+        self.assertIsNone(CAPTURE.summary(self.path, self.clock)["measurements"]["observed_parent_effort_seconds"])
+        self.event("effort", "integration", 2, 3)
+        measurements=CAPTURE.summary(self.path, self.clock)["measurements"]
+        self.assertEqual(measurements["observed_parent_effort_seconds"],3)
+        self.assertEqual(measurements["unmeasured_parent_effort_events"],1)
+
+    def test_summary_regeneration_keeps_recorded_window_stable(self):
+        self.event("effort", "integration", 2, 3)
+        first=CAPTURE.summary(self.path,self.clock)
+        self.clock.now+=1000
+        second=CAPTURE.summary(self.path,self.clock)
+        self.assertEqual(first["measurements"],second["measurements"])
+        self.assertNotEqual(first["summary_generated_at_epoch"],second["summary_generated_at_epoch"])
+        self.assertEqual(second["measurements"]["observation_window_seconds"],5)
+
+    def test_validation_and_conflicting_measurements(self):
+        for value in [float("nan"), float("inf"), -1, True]:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                self.event("effort", "integration", 0, value)
+        w = self.event("worker", "dispatch", 1, 2, task_id="exact")
+        with self.assertRaises(ValueError): CAPTURE.record(self.path, dict(w, duration_seconds=3))
+        with self.assertRaises(FileExistsError): CAPTURE.start(self.path, "x", "x", [])
+
+    def test_unicode_line_separators_preserve_jsonl_records(self):
+        text = "pasted\u2028argument\u2029with\x85separators"
+        self.event("intervention", "preparation", 0, None, description=text, argv=[text])
+        self.assertEqual(CAPTURE.read(self.path)[-1]["description"], text)
+        self.assertEqual(CAPTURE.summary(self.path, self.clock)["events"][-1]["argv"], [text])
+
+    def test_worker_attempts_and_phases_remain_separate(self):
+        first=self.event("worker", "dispatch", 1, 2, task_id="exact", completion_phase=1, attempt_index=0, native_rounds=1, status="failed")
+        self.event("worker", "dispatch", 3, 4, task_id="exact", completion_phase=1, attempt_index=1, native_rounds=2, status="completed")
+        self.event("worker", "dispatch", 7, 2, task_id="next-task", completion_phase=2, attempt_index=0, native_rounds=1)
+        CAPTURE.record(self.path, first)
+        with self.assertRaises(ValueError): CAPTURE.record(self.path, dict(first, duration_seconds=9))
+        self.assertEqual(CAPTURE.summary(self.path, self.clock)["metrics"]["native_rounds"], 4)
+
+    def test_worker_missing_attempt_identity_is_refused_before_reimport(self):
+        event=dict(kind='worker',phase='dispatch',source='owned result',task_id='exact',completion_phase=1,offset_seconds=1,duration_seconds=2,native_rounds=3)
+        with self.assertRaisesRegex(ValueError,'attempt_index'):CAPTURE.record(self.path,event)
+        event['attempt_index']=0;CAPTURE.record(self.path,event);CAPTURE.record(self.path,event)
+        self.assertEqual(CAPTURE.summary(self.path,self.clock)['metrics']['native_rounds'],3)
+
+    def test_wrapper_preserves_arguments_environment_cwd_bytes_exit_and_ids(self):
+        self.path.unlink(); CAPTURE.start(self.path, "native-parent", "subprocess", [])
+        script = "import json,os,sys; print(json.dumps(dict(argv=sys.argv[1:],cwd=os.getcwd(),binding=os.environ.get('NPEER_BINDING'),client_request_id='request-exact',data=dict(task_id='task-exact')))); sys.stderr.buffer.write(b'error\\x00'); sys.exit(7)"
+        cmd = [sys.executable, "-c", script, "literal $() `quoted`", "--compact", "--json"]
+        env = dict(os.environ, NPEER_BINDING="fixture-native-binding")
+        direct = subprocess.run(cmd, env=env, cwd=self.temp.name, capture_output=True)
+        wrapped = subprocess.run([sys.executable, str(SCRIPT), "run", "--phase", "preparation", str(self.path), "--", *cmd], env=env, cwd=self.temp.name, capture_output=True)
+        self.assertEqual((wrapped.returncode, wrapped.stdout, wrapped.stderr), (direct.returncode, direct.stdout, direct.stderr))
+        event = CAPTURE.read(self.path)[-1]
+        self.assertEqual(event["argv"], cmd)
+        self.assertEqual(event["ids"], [{"client_request_id":"request-exact"}, {"task_id":"task-exact"}])
+        self.assertEqual(event["stdout_bytes"] + event["stderr_bytes"], len(direct.stdout) + len(direct.stderr))
+
+    def test_missing_command_is_recorded_and_bad_ledger_executes_nothing(self):
+        self.path.unlink(); CAPTURE.start(self.path, "native-parent", "subprocess", [])
+        wrapped = subprocess.run([sys.executable, str(SCRIPT), "run", "--phase", "preparation", str(self.path), "--", "/absent/capture-command"], capture_output=True)
+        self.assertEqual(wrapped.returncode, 127)
+        self.assertEqual(CAPTURE.read(self.path)[-1]["launch_error"], "FileNotFoundError")
+        sentinel = Path(self.temp.name) / "sentinel"
+        bad = subprocess.run([sys.executable, str(SCRIPT), "run", "--phase", "dispatch", str(self.path) + ".missing", "--", sys.executable, "-c", f"open({str(sentinel)!r},'w').write('bad')"], capture_output=True)
+        self.assertEqual(bad.returncode, 2)
+        self.assertFalse(sentinel.exists())
+
+    def test_excluded_flag_before_or_after_ledger_never_becomes_command(self):
+        self.path.unlink(); CAPTURE.start(self.path, "native-parent", "excluded CLI", [])
+        cmd=[sys.executable,"-c","import sys; sys.stdout.buffer.write(b'exact'); sys.exit(9)"]
+        for options in [["--excluded", "--phase", "integration", str(self.path)], ["--phase", "integration", str(self.path), "--excluded"]]:
+            result=subprocess.run([sys.executable,str(SCRIPT),"run",*options,"--",*cmd],capture_output=True)
+            self.assertEqual((result.returncode,result.stdout,result.stderr),(9,b"exact",b""))
+        self.assertEqual(CAPTURE.summary(self.path)["metrics"]["setup_tool_calls"],0)
+        self.assertEqual(CAPTURE.summary(self.path)["measurements"]["excluded_events"],2)
+
+    def test_recording_failure_after_execution_does_not_mask_or_retry(self):
+        with patch.object(CAPTURE, "record", side_effect=OSError("disk full")), patch.object(CAPTURE.subprocess, "run", return_value=subprocess.CompletedProcess([], 6, b"", b"")) as execute:
+            self.assertEqual(CAPTURE.run(self.path, "dispatch", ["fixture"], clock=self.clock), 6)
+            execute.assert_called_once()
+
+
+if __name__ == "__main__": unittest.main()

@@ -1,0 +1,50 @@
+{
+  "observed_at": "2026-10-30T18:53:39.668085-04:00",
+  "repository": "scalinity/NativePeers",
+  "active_dependencies": [
+    {
+      "number": 3,
+      "url": "https://github.com/scalinity/NativePeers/issues/3",
+      "status": "OPEN",
+      "note": "Existing budget fix is open PR5; integrate/qualify before claiming installed."
+    },
+    {
+      "number": 7,
+      "url": "https://github.com/scalinity/NativePeers/issues/7",
+      "status": "OPEN_ACTIVE_OWNER",
+      "note": "Quiet close-out already owned; do not duplicate implementation."
+    }
+  ],
+  "improvements": {
+    "workflow": {
+      "number": 10,
+      "title": "Make a bounded review easy to prepare with one compact, task-oriented preflight",
+      "url": "https://github.com/scalinity/NativePeers/issues/10"
+    },
+    "review_context": {
+      "number": 11,
+      "title": "Prepare a small immutable review packet that works within the analysis profile",
+      "url": "https://github.com/scalinity/NativePeers/issues/11"
+    },
+    "results": {
+      "number": 12,
+      "title": "Return compact task-focused results and make handle errors actionable",
+      "url": "https://github.com/scalinity/NativePeers/issues/12"
+    },
+    "completion_diagnostics": {
+      "number": 13,
+      "title": "Make completion notices phase-aware and surface the actual budget or provider failure",
+      "url": "https://github.com/scalinity/NativePeers/issues/13"
+    },
+    "coordination": {
+      "number": 14,
+      "title": "Make peer coordination carry a bounded source and runtime handoff",
+      "url": "https://github.com/scalinity/NativePeers/issues/14"
+    },
+    "acceptance": {
+      "number": 16,
+      "title": "Reach a fully observed 100/100 NativePeers review and coordination session",
+      "url": "https://github.com/scalinity/NativePeers/issues/16"
+    }
+  }
+}
