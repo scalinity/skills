@@ -1,0 +1,30 @@
+{
+  "skill_frontmatter": "PASS",
+  "python_tests": {
+    "passed": 12,
+    "failed": 0,
+    "scope": "Scoring, coverage, immutable/idempotent records, revisions, concurrent appends, report recovery, corrupt-store rejection, compact errors"
+  },
+  "installation_paths": 9,
+  "full_bundle_links": "PASS",
+  "helper_through_each_link": "PASS",
+  "interactive_harness_invocation": "NOT_RUN across all harnesses",
+  "independent_forward_test": {
+    "status": "COMPLETED",
+    "provider": "claude",
+    "model_observed": "claude-sonnet-5-5",
+    "native_session_id": "525ac815-d936-48fc-becd-c5346f5ffb64",
+    "task_id": "e9dd29e2-85d3-4a48-bb46-b934144b8529",
+    "scope": "Read-only simulation of 3 cases and source inspection; did not run Python or mutate issues/history"
+  },
+  "review_disposition": [
+    "Partial corrections intentionally replace unsupported complete scores; clarified deliberate carry-forward only for valid old evidence.",
+    "Reject older/equal timestamps for a new revision rather than silently choosing another record.",
+    "Reuse exact prepared record for idempotent retries; do not regenerate recorded_at.",
+    "Prevalidate existing records before publishing a new record; reports remain recoverable derived data.",
+    "Added partial/unscored counts, measured-cost display and compact malformed-input errors.",
+    "Native review of Markdown formatting was informational; this local Markdown report is not a web execution surface."
+  ],
+  "historical_score": 64.5,
+  "product_implementation": "NOT_STARTED; GitHub backlog and prompt are the deliverables"
+}

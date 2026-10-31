@@ -1,0 +1,20 @@
+{
+  "purpose": "Read-only behavioural regression scenarios; do not append simulated outcomes to the real shared history or mutate GitHub while testing.",
+  "cases": [
+    {
+      "id": "unused",
+      "request": "/np-eval",
+      "facts": "This session edited local CSS; no NativePeers tools, workers, messages, native results or usage observations exist."
+    },
+    {
+      "id": "source-only",
+      "request": "/np-eval",
+      "facts": "Source tests passed in a disposable checkout. One worker admission is ACCEPTED_QUEUED. No installed native result or recipient ingestion was observed. Existing budget issue3/PR5 and active issue7 already cover the reported gaps."
+    },
+    {
+      "id": "revision",
+      "request": "/np-eval again with corrected attribution",
+      "facts": "Record trial-session with session key codex:trial exists. Original score charged90 minutes of parent Rust compilation to NativePeers; new evidence attributes compilation to the parent, while a useful native Claude review completed, two earlier native caps exhausted, an oldFAILED notice appeared after close, and a focused result was26KB. No installed quiet-close check ran."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "scale": "0 to 10 per observed criterion; weighted total out of 100",
+  "scope": "A session evaluation, not universal certification of NativePeers",
+  "criteria": [
+    {
+      "id": "native_collaboration",
+      "name": "Cross-vendor native collaboration",
+      "weight": 20,
+      "full_score": "The requested different-vendor native sessions complete useful work with correct observed model, identity, home and effective tools; results reach the intended parent and can be used without manual copying or invented completion."
+    },
+    {
+      "id": "isolation_recovery",
+      "name": "Isolation, attribution and recoverability",
+      "weight": 15,
+      "full_score": "Observed work preserves unrelated files, sessions and provider state; source/worker deltas and ownership are clear; failed or interrupted attempts remain recoverable; integration and cleanup use the actual recorded scope."
+    },
+    {
+      "id": "delivery_lifecycle",
+      "name": "Delivery and completion lifecycle",
+      "weight": 20,
+      "full_score": "Admission, native ingestion, model acknowledgment and completion are correctly distinguished; failures and later phases are intelligible; actual quiet close-out preserves the final visible response with genuine delayed frames retained and no extra chat turns."
+    },
+    {
+      "id": "agent_efficiency",
+      "name": "Agent usability and context efficiency",
+      "weight": 15,
+      "full_score": "A bounded task uses a compact prepared context, visible compatible tools and separate budget dimensions; ordinary preparation/results need no avoidable manual reconstruction, redundant diagnostic loop, oversized historical payload or permission escalation."
+    },
+    {
+      "id": "productivity",
+      "name": "Practical productivity",
+      "weight": 20,
+      "full_score": "Delegation or coordination produces demonstrated useful findings, integration or parallel progress whose value justifies measured orchestration/intervention costs; task slicing is appropriate and unrelated compilation or the parent agent's mistakes are not charged to the tool."
+    },
+    {
+      "id": "workflow_fit",
+      "name": "Novelty, differentiation and workflow fit",
+      "weight": 10,
+      "full_score": "The session demonstrates a distinct practical native-session benefit over its realistic simpler alternative, using existing capabilities with little friction. Full credit does not require claiming invention of agent messaging or an exhaustive novelty search."
+    }
+  ],
+  "anchors": {
+    "0": "Observed unusable or harmful behavior for the criterion.",
+    "2": "Repeated failure; the intended useful outcome was not reached.",
+    "4": "Useful capability exists, but material failures or manual recovery dominate.",
+    "6": "Useful outcome with substantial friction or incomplete measured benefit.",
+    "8": "Reliable observed outcome with minor bounded friction.",
+    "10": "The criterion's complete full-score behavior is observed and supported."
+  },
+  "rules": [
+    "Use intermediate numeric scores when supported; keep the weights fixed for comparisons.",
+    "Missing observations are null, not zero or ten; report observed weight as coverage.",
+    "An overall score is reported only at 100 percent coverage; partial evaluations retain per-criterion scores.",
+    "A 100 requires native-result evidence and no unresolved recorded failures; source-only checks are insufficient.",
+    "Separate tool defects, agent orchestration mistakes, provider limits and external build costs.",
+    "Historical scores remain immutable. Revisions retain the old record and share a session key so aggregates count only the latest revision per session.",
+    "Compare complete session scores and per-criterion sample counts; do not call observational scores a controlled benchmark."
+  ]
+}
