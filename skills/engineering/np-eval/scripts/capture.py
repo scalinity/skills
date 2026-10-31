@@ -20,7 +20,7 @@ def encode(value):
 
 
 def read(path):
-    rows = [json.loads(line) for line in Path(path).read_text().splitlines()]
+    rows = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").split("\n") if line]
     if not rows or rows[0].get("schema_version") != 1 or rows[0].get("kind") != "start":
         raise ValueError("Not a capture ledger")
     return rows

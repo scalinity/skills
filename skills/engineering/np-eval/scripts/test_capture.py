@@ -73,6 +73,12 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaises(ValueError): CAPTURE.record(self.path, dict(w, duration_seconds=3))
         with self.assertRaises(FileExistsError): CAPTURE.start(self.path, "x", "x", [])
 
+    def test_unicode_line_separators_preserve_jsonl_records(self):
+        text = "pasted\u2028argument\u2029with\x85separators"
+        self.event("intervention", "preparation", 0, None, description=text, argv=[text])
+        self.assertEqual(CAPTURE.read(self.path)[-1]["description"], text)
+        self.assertEqual(CAPTURE.summary(self.path, self.clock)["events"][-1]["argv"], [text])
+
     def test_wrapper_preserves_arguments_environment_cwd_bytes_exit_and_ids(self):
         self.path.unlink(); CAPTURE.start(self.path, "native-parent", "subprocess", [])
         script = "import json,os,sys; print(json.dumps(dict(argv=sys.argv[1:],cwd=os.getcwd(),binding=os.environ.get('NPEER_BINDING'),client_request_id='request-exact',data=dict(task_id='task-exact')))); sys.stderr.buffer.write(b'error\\x00'); sys.exit(7)"
