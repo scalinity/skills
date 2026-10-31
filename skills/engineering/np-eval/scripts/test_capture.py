@@ -65,6 +65,14 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(s["metrics"]["result_bytes"], 0)
         self.assertTrue(any("no MCP success" in x for x in s["limitations"]))
 
+    def test_unknown_effort_stays_null_and_partial_effort_is_labelled(self):
+        self.event("effort", "integration", 1, None)
+        self.assertIsNone(CAPTURE.summary(self.path, self.clock)["measurements"]["observed_parent_effort_seconds"])
+        self.event("effort", "integration", 2, 3)
+        measurements=CAPTURE.summary(self.path, self.clock)["measurements"]
+        self.assertEqual(measurements["observed_parent_effort_seconds"],3)
+        self.assertEqual(measurements["unmeasured_parent_effort_events"],1)
+
     def test_validation_and_conflicting_measurements(self):
         for value in [float("nan"), float("inf"), -1, True]:
             with self.subTest(value=value), self.assertRaises(ValueError):
