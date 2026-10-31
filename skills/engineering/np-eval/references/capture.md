@@ -6,10 +6,10 @@ Resolve this bundle to its real path and set `capture` to `scripts/capture.py`.
 
 ```sh
 python3 "$capture" start /absolute/ignored/cost.jsonl --session VERIFIED_NATIVE_UUID --scope "Selected implementation review" --exclude "Unobserved thinking, billing and activity before this boundary"
-python3 "$capture" run --phase preparation /absolute/ignored/cost.jsonl -- /Users/danny/.local/bin/npeer context-prepare --project /absolute/repo --base EXACT_BASE --path src/file.py --json
-python3 "$capture" run --phase dispatch /absolute/ignored/cost.jsonl -- /Users/danny/.local/bin/npeer spawn --spec /absolute/review.json --json
-python3 "$capture" run --phase wait /absolute/ignored/cost.jsonl -- /Users/danny/.local/bin/npeer wait EXACT_TASK_ID --timeout-ms 30000 --on-timeout retain --json
-python3 "$capture" run --phase collection /absolute/ignored/cost.jsonl -- /Users/danny/.local/bin/npeer result EXACT_TASK_ID --compact --json
+python3 "$capture" run --phase preparation /absolute/ignored/cost.jsonl -- npeer context-prepare --project /absolute/repo --base EXACT_BASE --path src/file.py --json
+python3 "$capture" run --phase dispatch /absolute/ignored/cost.jsonl -- npeer spawn --spec /absolute/review.json --json
+python3 "$capture" run --phase wait /absolute/ignored/cost.jsonl -- npeer wait EXACT_TASK_ID --timeout-ms 30000 --on-timeout retain --json
+python3 "$capture" run --phase collection /absolute/ignored/cost.jsonl -- npeer result EXACT_TASK_ID --compact --json
 python3 "$capture" summary /absolute/ignored/cost.jsonl > /absolute/ignored/cost-summary.json
 ```
 
