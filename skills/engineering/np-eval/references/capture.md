@@ -45,11 +45,11 @@ The summary's numeric `metrics` can populate an evaluation record. Its limitatio
 must travel with those values: orchestration seconds measure recorded non-wait
 CLI intervals only, never total parent thinking/work. Worker sum, worker interval
 union, wait interval union and observation-window elapsed are separate seconds;
-overlaps are not added. Result bytes are stdout plus stderr, not tokens, billing,
-The observation window ends at the last recorded interval end, including excluded
-activity; untimed manual events do not extend it. Summary generation time is
-reported separately, so rebuilding a summary preserves its measured window.
-wire traffic or MCP bytes. An MCP-only workflow uses explicit observed events with
+overlaps are not added. The observation window ends at the last recorded interval
+end, including excluded activity; untimed manual events do not extend it. Summary
+generation time is reported separately, so rebuilding a summary preserves its
+measured window. Result bytes are stdout plus stderr, not tokens, billing, wire
+traffic or MCP bytes. An MCP-only workflow uses explicit observed events with
 source/coverage and nullable values; CLI coverage never establishes MCP success.
 Keep the summary/events as the observation reference and validate the evaluation
 with `evaluate.py validate` before the normal immutable append.
