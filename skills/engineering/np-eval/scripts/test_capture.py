@@ -110,6 +110,15 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(bad.returncode, 2)
         self.assertFalse(sentinel.exists())
 
+    def test_excluded_flag_before_or_after_ledger_never_becomes_command(self):
+        self.path.unlink(); CAPTURE.start(self.path, "native-parent", "excluded CLI", [])
+        cmd=[sys.executable,"-c","import sys; sys.stdout.buffer.write(b'exact'); sys.exit(9)"]
+        for options in [["--excluded", "--phase", "integration", str(self.path)], ["--phase", "integration", str(self.path), "--excluded"]]:
+            result=subprocess.run([sys.executable,str(SCRIPT),"run",*options,"--",*cmd],capture_output=True)
+            self.assertEqual((result.returncode,result.stdout,result.stderr),(9,b"exact",b""))
+        self.assertEqual(CAPTURE.summary(self.path)["metrics"]["setup_tool_calls"],0)
+        self.assertEqual(CAPTURE.summary(self.path)["measurements"]["excluded_events"],2)
+
     def test_recording_failure_after_execution_does_not_mask_or_retry(self):
         with patch.object(CAPTURE, "record", side_effect=OSError("disk full")), patch.object(CAPTURE.subprocess, "run", return_value=subprocess.CompletedProcess([], 6, b"", b"")) as execute:
             self.assertEqual(CAPTURE.run(self.path, "dispatch", ["fixture"], clock=self.clock), 6)

@@ -170,14 +170,18 @@ def main():
     p = sub.add_parser("start"); p.add_argument("ledger"); p.add_argument("--session", required=True)
     p.add_argument("--scope", required=True); p.add_argument("--exclude", action="append", default=[])
     p = sub.add_parser("run"); p.add_argument("ledger"); p.add_argument("--phase", choices=sorted(PHASES), required=True)
-    p.add_argument("--excluded", action="store_true"); p.add_argument("argv", nargs=argparse.REMAINDER)
+    p.add_argument("--excluded", action="store_true")
     p = sub.add_parser("record"); p.add_argument("ledger"); p.add_argument("event", type=Path)
     p = sub.add_parser("summary"); p.add_argument("ledger")
-    args = parser.parse_args()
+    wrapper_args = sys.argv[1:]
+    command = []
+    if wrapper_args[:1] == ["run"] and "--" in wrapper_args:
+        split = wrapper_args.index("--")
+        wrapper_args, command = wrapper_args[:split], wrapper_args[split+1:]
+    args = parser.parse_args(wrapper_args)
     if args.action == "start":
         start(args.ledger, args.session, args.scope, args.exclude)
     elif args.action == "run":
-        command = args.argv[1:] if args.argv[:1] == ["--"] else args.argv
         if not command: parser.error("Supply a noninteractive command after --")
         # A signal return remains a signal to the invoking shell.
         code = run(args.ledger, args.phase, command, args.excluded)

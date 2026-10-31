@@ -22,6 +22,9 @@ Use the real native shell and verify `whoami` through the wrapper before dispatc
 
 Record integration commands too. Mark unrelated builds/parent mistakes with
 `--excluded`, keeping their outcome visible without charging them as tool cost.
+For example: `python3 "$capture" run --phase integration LEDGER --excluded -- COMMAND`.
+Wrapper options are parsed before the required `--`; command arguments after it
+are passed verbatim, even when they match wrapper option names.
 Repeated reads remain separate commands. Record interventions with
 `record LEDGER /absolute/event.json`, for example:
 
