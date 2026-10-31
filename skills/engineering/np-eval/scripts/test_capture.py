@@ -51,7 +51,7 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(s["measurements"]["worker_duration_sum_seconds"], 15)
         self.assertEqual(s["measurements"]["worker_interval_union_seconds"], 10)
         self.assertEqual(s["measurements"]["wait_interval_union_seconds"], 10)
-        self.assertEqual(s["measurements"]["observation_window_seconds"], 80)
+        self.assertEqual(s["measurements"]["observation_window_seconds"], 72)
         self.assertIsNone(s["measurements"]["observed_parent_effort_seconds"])
         self.assertEqual(s["measurements"]["interventions"], 2)
         self.assertEqual(s["measurements"]["excluded_events"], 1)
@@ -72,6 +72,15 @@ class CaptureTests(unittest.TestCase):
         measurements=CAPTURE.summary(self.path, self.clock)["measurements"]
         self.assertEqual(measurements["observed_parent_effort_seconds"],3)
         self.assertEqual(measurements["unmeasured_parent_effort_events"],1)
+
+    def test_summary_regeneration_keeps_recorded_window_stable(self):
+        self.event("effort", "integration", 2, 3)
+        first=CAPTURE.summary(self.path,self.clock)
+        self.clock.now+=1000
+        second=CAPTURE.summary(self.path,self.clock)
+        self.assertEqual(first["measurements"],second["measurements"])
+        self.assertNotEqual(first["summary_generated_at_epoch"],second["summary_generated_at_epoch"])
+        self.assertEqual(second["measurements"]["observation_window_seconds"],5)
 
     def test_validation_and_conflicting_measurements(self):
         for value in [float("nan"), float("inf"), -1, True]:
