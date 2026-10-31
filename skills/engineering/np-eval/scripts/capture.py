@@ -50,6 +50,8 @@ def record(path, event):
         raise ValueError("A measured interval needs its start offset")
     if event["kind"] == "worker" and not event.get("task_id"):
         raise ValueError("Worker measurements need the exact task ID; keep phases/attempts separate")
+    if event["kind"] == "worker" and (type(event.get("attempt_index")) is not int or event["attempt_index"] < 0):
+        raise ValueError("Worker measurements need the owned result's nonnegative attempt_index")
     if event["kind"] == "command" and any(not number(event.get(k)) for k in ("stdout_bytes", "stderr_bytes")):
         raise ValueError("Command measurements need observed stdout/stderr bytes")
     encode(event)
@@ -57,7 +59,7 @@ def record(path, event):
         fcntl.flock(stream, fcntl.LOCK_EX)
         rows = read(path)
         if event["kind"] == "worker":
-            identity = ("task_id", "phase_id", "attempt_index")
+            identity = ("task_id", "attempt_index")
             prior = [r for r in rows[1:] if r.get("kind") == "worker" and
                      all(r.get(key) == event.get(key) for key in identity)]
             if prior:

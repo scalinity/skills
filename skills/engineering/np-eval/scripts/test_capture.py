@@ -32,6 +32,7 @@ class CaptureTests(unittest.TestCase):
 
     def event(self, kind, phase, offset, duration, **extra):
         e = dict(kind=kind, phase=phase, offset_seconds=offset, duration_seconds=duration, source="fixture")
+        if kind == "worker":e['attempt_index']=0
         e.update(extra)
         CAPTURE.record(self.path, e)
         return e
@@ -39,7 +40,7 @@ class CaptureTests(unittest.TestCase):
     def test_failed_setup_repeated_reads_interventions_and_concurrency(self):
         for phase, offset, duration, exit_code in [("preparation", 0, 2, 127), ("preparation", 2, 3, 2), ("dispatch", 5, 1, 0), ("wait", 6, 10, 0), ("collection", 16, 2, 0), ("collection", 18, 1, 0), ("integration", 19, 3, 0)]:
             self.event("command", phase, offset, duration, stdout_bytes=10, stderr_bytes=2, exit_code=exit_code)
-        worker = self.event("worker", "dispatch", 6, 10, task_id="task-a", group_id="group", phase_id=1, native_rounds=4)
+        worker = self.event("worker", "dispatch", 6, 10, task_id="task-a", group_id="group", completion_phase=1, native_rounds=4)
         CAPTURE.record(self.path, worker)
         self.event("worker", "dispatch", 8, 5, task_id="task-b", native_rounds=3)
         for reason in ["fix selection", "repeat read"]:
@@ -97,12 +98,18 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(CAPTURE.summary(self.path, self.clock)["events"][-1]["argv"], [text])
 
     def test_worker_attempts_and_phases_remain_separate(self):
-        first=self.event("worker", "dispatch", 1, 2, task_id="exact", phase_id=1, attempt_index=0, native_rounds=1, status="failed")
-        self.event("worker", "dispatch", 3, 4, task_id="exact", phase_id=1, attempt_index=1, native_rounds=2, status="completed")
-        self.event("worker", "dispatch", 7, 2, task_id="next-task", phase_id=2, attempt_index=0, native_rounds=1)
+        first=self.event("worker", "dispatch", 1, 2, task_id="exact", completion_phase=1, attempt_index=0, native_rounds=1, status="failed")
+        self.event("worker", "dispatch", 3, 4, task_id="exact", completion_phase=1, attempt_index=1, native_rounds=2, status="completed")
+        self.event("worker", "dispatch", 7, 2, task_id="next-task", completion_phase=2, attempt_index=0, native_rounds=1)
         CAPTURE.record(self.path, first)
         with self.assertRaises(ValueError): CAPTURE.record(self.path, dict(first, duration_seconds=9))
         self.assertEqual(CAPTURE.summary(self.path, self.clock)["metrics"]["native_rounds"], 4)
+
+    def test_worker_missing_attempt_identity_is_refused_before_reimport(self):
+        event=dict(kind='worker',phase='dispatch',source='owned result',task_id='exact',completion_phase=1,offset_seconds=1,duration_seconds=2,native_rounds=3)
+        with self.assertRaisesRegex(ValueError,'attempt_index'):CAPTURE.record(self.path,event)
+        event['attempt_index']=0;CAPTURE.record(self.path,event);CAPTURE.record(self.path,event)
+        self.assertEqual(CAPTURE.summary(self.path,self.clock)['metrics']['native_rounds'],3)
 
     def test_wrapper_preserves_arguments_environment_cwd_bytes_exit_and_ids(self):
         self.path.unlink(); CAPTURE.start(self.path, "native-parent", "subprocess", [])
