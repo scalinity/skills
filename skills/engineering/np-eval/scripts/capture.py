@@ -57,7 +57,9 @@ def record(path, event):
         fcntl.flock(stream, fcntl.LOCK_EX)
         rows = read(path)
         if event["kind"] == "worker":
-            prior = [r for r in rows[1:] if r.get("kind") == "worker" and r.get("task_id") == event["task_id"]]
+            identity = ("task_id", "phase_id", "attempt_index")
+            prior = [r for r in rows[1:] if r.get("kind") == "worker" and
+                     all(r.get(key) == event.get(key) for key in identity)]
             if prior:
                 if prior == [event]:
                     return  # Re-reading the same result does not add worker cost again.

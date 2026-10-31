@@ -79,6 +79,14 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(CAPTURE.read(self.path)[-1]["description"], text)
         self.assertEqual(CAPTURE.summary(self.path, self.clock)["events"][-1]["argv"], [text])
 
+    def test_worker_attempts_and_phases_remain_separate(self):
+        first=self.event("worker", "dispatch", 1, 2, task_id="exact", phase_id=1, attempt_index=0, native_rounds=1, status="failed")
+        self.event("worker", "dispatch", 3, 4, task_id="exact", phase_id=1, attempt_index=1, native_rounds=2, status="completed")
+        self.event("worker", "dispatch", 7, 2, task_id="next-task", phase_id=2, attempt_index=0, native_rounds=1)
+        CAPTURE.record(self.path, first)
+        with self.assertRaises(ValueError): CAPTURE.record(self.path, dict(first, duration_seconds=9))
+        self.assertEqual(CAPTURE.summary(self.path, self.clock)["metrics"]["native_rounds"], 4)
+
     def test_wrapper_preserves_arguments_environment_cwd_bytes_exit_and_ids(self):
         self.path.unlink(); CAPTURE.start(self.path, "native-parent", "subprocess", [])
         script = "import json,os,sys; print(json.dumps(dict(argv=sys.argv[1:],cwd=os.getcwd(),binding=os.environ.get('NPEER_BINDING'),client_request_id='request-exact',data=dict(task_id='task-exact')))); sys.stderr.buffer.write(b'error\\x00'); sys.exit(7)"

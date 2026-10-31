@@ -29,10 +29,11 @@ Repeated reads remain separate commands. Record interventions with
 {"kind":"intervention","phase":"collection","source":"task-note reference","description":"Read full report after compact preview omitted it","attribution":"agent","task_id":"EXACT_TASK_ID","duration_seconds":null}
 ```
 
-For owned worker results, record one `worker` event per exact task ID, preserving
-group/phase/request IDs and failed attempts. Supply `offset_seconds` (result start
+For owned worker results, record one `worker` event per exact task/attempt, preserving
+group/request IDs, `phase_id` and `attempt_index` from the owned result. Follow-ups
+have distinct task IDs; fallback attempts can share a task. Supply `offset_seconds` (result start
 epoch minus ledger `wall_start`), `duration_seconds`, `native_rounds` and the exact
-result reference. Unknowns are null. Identical imports are idempotent; conflicting
+result reference. Unknowns are null. Identical task/phase/attempt imports are idempotent; conflicting
 measurements are refused. Do not import native transcripts or provider homes.
 Explicit observed parent-effort intervals use `kind:effort`; without them parent
 effort stays null. Source IDs can be additional JSON fields.
