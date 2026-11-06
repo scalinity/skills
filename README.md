@@ -1,6 +1,6 @@
 # Skills
 
-A small, opinionated set of Claude Code skills I built for myself and use every day. Each one fixes a specific friction in how I work with coding agents — session handoffs, multi-perspective code review, portfolio READMEs, research synthesis — without trying to own the whole development process.
+A small, opinionated set of Claude Code skills I built for myself and use every day. Each one fixes a specific friction in how I work with coding agents — session handoffs, multi-perspective code review, portfolio READMEs, long CI, research synthesis — without trying to own the whole development process.
 
 These are small enough to fork and adapt. None of them require a particular model, framework, or plugin ecosystem. Take what's useful.
 
@@ -29,6 +29,7 @@ Each skill is a self-contained directory with a `SKILL.md`. Drop it (or symlink 
 - **[`/exhibit-3d`](./skills/engineering/exhibit-3d/SKILL.md)** — build interactive 3D science exhibits with a reusable Three.js/WebGPU kit, physics checks, capture tools and a native macOS viewer. Includes a golden example and visual references; see its [third-party image notice](./skills/engineering/exhibit-3d/THIRD_PARTY.md).
 - **[`/review-2`](./skills/engineering/review-2/SKILL.md)** / **[`/review-5`](./skills/engineering/review-5/SKILL.md)** / **[`/review-orchestrator`](./skills/engineering/review-orchestrator/SKILL.md)** — multi-agent, read-only code review. Three sizes for three changeset scales (2, 5, or 10 parallel reviewers). Includes severity calibration, false-positive guards, reachability traces for critical findings, and corroboration tagging across agents.
 - **[`/readme`](./skills/engineering/readme/SKILL.md)** — generate a portfolio-quality README from a project's specs, ADRs, and detected stack. Two-pass review against the codebase before committing.
+- **[`/speed-up-long-ci`](./skills/engineering/speed-up-long-ci/SKILL.md)** — measure PR CI wall-clock from ~150 real runs (waiting / setup / running at p50/p90), find the critical path, then cut it in impact order with before/after numbers on a branch.
 - **[`/terminal-ui-design`](./skills/engineering/terminal-ui-design/SKILL.md)** — build distinctive, production-grade TUIs that avoid generic terminal aesthetics.
 
 ### Research
