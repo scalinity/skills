@@ -220,12 +220,12 @@ If a field is genuinely unknown, write `unknown — flag if material`; do not fa
 
 | Agent ID | Type           | Focus Area                                                          | Model              | Teammate Name |
 | -------- | -------------- | ------------------------------------------------------------------- | ------------------ | ------------- |
-| DB1      | debugger       | Bugs end-to-end: logic, runtime, errors, types, integration         | claude-opus-4-7    | db1-bugs      |
-| CA1      | code-auditor   | Architecture, quality, performance, security, data integrity        | claude-opus-4-7    | ca1-audit     |
+| DB1      | debugger       | Bugs end-to-end: logic, runtime, errors, types, integration         | inherit parent    | db1-bugs      |
+| CA1      | code-auditor   | Architecture, quality, performance, security, data integrity        | inherit parent    | ca1-audit     |
 
 Total teammates: **2**. The single debugger absorbs the full bug-hunting scope (what `/review-5` splits across DB1/DB2/DB3); the single code-auditor absorbs the full quality/security/perf scope (what `/review-5` splits across CR1/CA1). Each agent has a broad lane on purpose — the goal is two complementary perspectives, not five narrow ones.
 
-**Model choice:** Both agents run on Opus 4.7. Bug-hunting and architecture/security auditing both benefit from deep reasoning; the depth premium pays off in fewer false positives and more reliable reachability traces on Critical findings. The de-correlated-blind-spots argument for split models is real but secondary — in practice the lane split (bugs vs quality/security/data integrity) drives most of the de-correlation, and a uniform high-capability run produces cleaner reports.
+**Model choice:** Both reviewers inherit the spawning session's model. Omit the model override when spawning them; the debugger/auditor lane split provides the two independent perspectives without requiring a specific provider or model.
 
 ### 2.3 Spawn Both Teammates in a SINGLE Message
 
@@ -237,7 +237,7 @@ FOR EACH agent IN agent_matrix:
       description: "{agent.id} {agent.focus}"
       prompt: "{agent.prompt}"            # scoped prompt + Read-Only Protocol below
       subagent_type: "{agent.type}"
-      model: "{agent.model}"
+      # Omit model to inherit the spawning session
       team_name: "review-2-{feature-name}"
       name: "{agent.teammate_name}"
 ```
@@ -588,7 +588,7 @@ Use this structure:
 ## Code Review: [Implementation / Feature / PR name]
 
 ### Summary
-[1–3 sentences describing the scope reviewed, the 2-agent team configuration, and the overall posture. (Orchestrator-only override: the base /review format from "The /review Format (Source of Truth)" specifies 1–2 sentences; the orchestrator gets up to 3 because it needs room to mention the agent configuration alongside the posture. Per-agent reports stay at 1–2.) Example: "Reviewed N files across the X feature with 2 specialist agents (1 debugger + 1 code-auditor, both Opus 4.7). Implementation is sound overall; 2 critical issues and 4 warnings require attention before merge."]
+[1–3 sentences describing the scope reviewed, the 2-agent team configuration, and the overall posture. (Orchestrator-only override: the base /review format from "The /review Format (Source of Truth)" specifies 1–2 sentences; the orchestrator gets up to 3 because it needs room to mention the agent configuration alongside the posture. Per-agent reports stay at 1–2.) Example: "Reviewed N files across the X feature with 2 specialist agents (1 debugger + 1 code-auditor, both inheriting the spawning session's model). Implementation is sound overall; 2 critical issues and 4 warnings require attention before merge."]
 
 **Scope (so the reader knows what was and wasn't reviewed):**
 - **Reviewed (diff-anchored per the Diff-First Protocol):** [list of files; mark each with one of: `(new file — full content reviewed)`, `(modified — changed lines + 20-line context + enclosing function/class)`, `(diff unavailable — full-file fallback applied)`]
@@ -734,7 +734,7 @@ After the unified report is emitted:
 5. [ ] Resolve `[SKILL DIR]` (absolute path to this skill's directory) for substitution in the DB1 prompt's references-file pointer.
 6. [ ] `TeamCreate` review team.
 7. [ ] `TaskCreate` one task per agent (2 total).
-8. [ ] Spawn BOTH teammates in ONE parallel `Agent` call. Each prompt = scope block + `[CONTEXT]` substituted (envelope-wrapped) + `[LIST FILES]` substituted + `[SKILL DIR]` substituted (DB1 only) + REPORT TITLE binding + Read-Only Protocol (with Diff-First Protocol + non-git fallback) + `/review` Output Template. Both teammates run on Opus 4.7.
+8. [ ] Spawn BOTH teammates in ONE parallel `Agent` call. Each prompt = scope block + `[CONTEXT]` substituted (envelope-wrapped) + `[LIST FILES]` substituted + `[SKILL DIR]` substituted (DB1 only) + REPORT TITLE binding + Read-Only Protocol (with Diff-First Protocol + non-git fallback) + `/review` Output Template. Both teammates inherit the spawning session's model; omit model overrides.
 9. [ ] `TaskUpdate` assign owners.
 10. [ ] Wait for both teammates' `/review`-format reports to arrive via `SendMessage`. Apply 10-minute-per-teammate budget; if a teammate times out or returns malformed output, switch to Phase 3.1 Degraded Synthesis.
 11. [ ] Phase 4.1: Deduplicate and tag every finding with one of the four corroboration labels (`corroborated: both agents` / `unique to X's lane` / `only X — Y was in scope but didn't flag` / `unique — outside both primary lanes`). Apply the pre-existing carve-out (only first two labels for `[PRE-EXISTING]` findings).
