@@ -256,7 +256,7 @@ const ttftLabel = (r) => r.latency.ttft ? (r.latency.ttft.ms / 1000).toFixed(2) 
 const GROUPS = {codex: 'Codex client time_to_first_token_ms for the turn', agy: 'Antigravity request-step creation to first streamed chunk'};
 // tooltip, lightbox, theme
 const tip = $('#tip');
-function showTip(el) { const t = el.getAttribute('data-tip'); if (!t) return; tip.innerHTML = t; tip.classList.add('on'); const b = el.getBoundingClientRect(); const w = tip.offsetWidth, h = tip.offsetHeight; let x = b.left + b.width / 2 - w / 2, y = b.top - h - 8; if (y < 8) y = b.bottom + 8; tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x)) + 'px'; tip.style.top = y + 'px'; }
+function showTip(el) { const t = el.getAttribute('data-tip'); if (!t) return; tip.innerHTML = esc(t).replace(/&lt;(\/?b|br)&gt;/g, '<$1>'); // the attribute is already decoded: re-escape it all, then restore only <b> and <br> tip.classList.add('on'); const b = el.getBoundingClientRect(); const w = tip.offsetWidth, h = tip.offsetHeight; let x = b.left + b.width / 2 - w / 2, y = b.top - h - 8; if (y < 8) y = b.bottom + 8; tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x)) + 'px'; tip.style.top = y + 'px'; }
 document.addEventListener('mouseover', e => { const el = e.target.closest('[data-tip]'); if (el) showTip(el); });
 document.addEventListener('mouseout', e => { if (e.target.closest('[data-tip]')) tip.classList.remove('on'); });
 document.addEventListener('focusin', e => { const el = e.target.closest('[data-tip]'); if (el) showTip(el); });
