@@ -1,0 +1,94 @@
+{
+  "retrievedUtc": "2026-11-19T17:00:00Z",
+  "models": {
+    "gpt-6.1-sol": {
+      "input": 2,
+      "cachedInput": 0.1,
+      "output": 10,
+      "longContextThreshold": 272000,
+      "tier": "Standard, short context",
+      "date": "2026-11-19",
+      "source": "https://developers.openai.com/api/docs/pricing"
+    },
+    "gpt-6.2-sol": {
+      "input": 2,
+      "cachedInput": 0.1,
+      "output": 10,
+      "longContextThreshold": 272000,
+      "tier": "Standard, short context",
+      "date": "2026-11-19",
+      "source": "https://developers.openai.com/api/docs/pricing"
+    },
+    "gpt-6.2-astra": {
+      "input": 8,
+      "cachedInput": 0.4,
+      "output": 40,
+      "longContextThreshold": 272000,
+      "tier": "Standard, short context",
+      "date": "2026-11-19",
+      "source": "https://developers.openai.com/api/docs/pricing"
+    },
+    "gpt-6-astra": {
+      "input": 10,
+      "cachedInput": 1,
+      "output": 50,
+      "longContextThreshold": 272000,
+      "tier": "Standard, short context",
+      "date": "2026-11-19",
+      "source": "https://developers.openai.com/api/docs/pricing"
+    },
+    "claude-opus-5-5": {
+      "input": 4,
+      "cacheRead": 0.2,
+      "cacheWrite1h": 8,
+      "cacheWrite5m": 5,
+      "output": 20,
+      "tier": "Anthropic API standard",
+      "date": "2026-11-03",
+      "source": "Anthropic model pricing (claude-api skill table)"
+    },
+    "claude-sonnet-5-5": {
+      "input": 2,
+      "cacheRead": 0.1,
+      "cacheWrite1h": 4,
+      "cacheWrite5m": 2.5,
+      "output": 10,
+      "tier": "Anthropic API standard",
+      "date": "2026-11-03",
+      "source": "Anthropic model pricing (claude-api skill table)"
+    },
+    "claude-fable-5-2": {
+      "input": 8,
+      "cacheRead": 0.2,
+      "cacheWrite1h": 16,
+      "cacheWrite5m": 10,
+      "output": 40,
+      "tier": "Anthropic API standard",
+      "date": "2026-11-03",
+      "source": "Anthropic model pricing (claude-api skill table)"
+    },
+    "claude-haiku-5-5": {
+      "input": 0.1,
+      "output": 0.5,
+      "tier": "Anthropic API standard",
+      "date": "2026-11-03",
+      "source": "Anthropic model pricing (claude-api skill table)"
+    },
+    "gemini-4-neon": {
+      "input": 3,
+      "cacheRead": 0.15,
+      "output": 15,
+      "tier": "Paid, Standard",
+      "date": "2026-11-19",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing"
+    },
+    "gemini-4-hydrogen": {
+      "input": 1.5,
+      "cacheRead": 0.075,
+      "output": 7.5,
+      "tier": "Paid, Standard",
+      "date": "2026-11-19",
+      "source": "https://ai.google.dev/gemini-api/docs/pricing"
+    }
+  }
+}

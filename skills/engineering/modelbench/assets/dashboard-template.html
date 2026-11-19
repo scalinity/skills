@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="icon" href="data:,">
+<style>
+:root{color-scheme:light;--table:#e8eef0;--glass:#f7fafa;--ink:#13202a;--graphite:#4a5862;--faint:#6b7a83;--hair:#c5d1d6;--signal:#b4232f;--v-OpenAI:#2a78d6;--v-Google:#eb6834;--v-Anthropic:#1baf7a;--r1:#86b6ef;--r2:#3987e5;--r3:#1c5cab;--r4:#0d366b;--bar:#3987e5;--bar2:#9ec5f4;--bar3:#1c5cab;--shadow:0 1px 0 #fff inset;--sans:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;--serif:"Iowan Old Style",Charter,"Palatino Linotype",Palatino,Georgia,serif}
+:root[data-theme=dark]{color-scheme:dark;--table:#0f1418;--glass:#161d22;--ink:#e6edf0;--graphite:#a3b2ba;--faint:#7f8f98;--hair:#2c3840;--signal:#ff7a7a;--v-OpenAI:#3987e5;--v-Google:#d95926;--v-Anthropic:#199e70;--r1:#184f95;--r2:#256abf;--r3:#5598e7;--r4:#b7d3f6;--bar:#5598e7;--bar2:#1c5cab;--bar3:#9ec5f4;--shadow:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--table:#0f1418;--glass:#161d22;--ink:#e6edf0;--graphite:#a3b2ba;--faint:#7f8f98;--hair:#2c3840;--signal:#ff7a7a;--v-OpenAI:#3987e5;--v-Google:#d95926;--v-Anthropic:#199e70;--r1:#184f95;--r2:#256abf;--r3:#5598e7;--r4:#b7d3f6;--bar:#5598e7;--bar2:#1c5cab;--bar3:#9ec5f4;--shadow:none}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--table);color:var(--ink);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--v-OpenAI);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+header.top{padding:44px 0 20px}
+.titlerow{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between}
+h1{font-size:44px;line-height:1.02;letter-spacing:-.025em;font-weight:600;margin:0;max-width:24ch;text-wrap:balance}
+.lede{font-family:var(--serif);font-size:17px;line-height:1.55;color:var(--graphite);max-width:68ch;margin:14px 0 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button,select,input[type=search]{font:inherit;font-size:14px;color:var(--ink);background:var(--glass);border:1px solid var(--hair);border-radius:6px;padding:7px 12px}
+button{cursor:pointer}
+button:hover{border-color:var(--graphite)}
+.verdict{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);margin:26px 0 0}
+.verdict p{margin:0;padding:16px 18px 18px 0;font-size:15px;line-height:1.45}
+.verdict p+p{padding-left:18px;border-left:1px solid var(--hair)}
+.verdict b{font-weight:600}
+.verdict .what{display:block;color:var(--graphite);font-size:13px;margin-bottom:4px}
+nav.sections{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--table) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--hair)}
+nav.sections ul{list-style:none;margin:0;padding:0;display:flex;gap:4px;overflow-x:auto}
+nav.sections a{display:block;padding:12px 10px;text-decoration:none;color:var(--graphite);font-size:14px;white-space:nowrap}
+nav.sections a:hover{color:var(--ink)}
+section{padding:42px 0 8px}
+h2{font-size:26px;letter-spacing:-.015em;font-weight:600;margin:0 0 6px}
+.note{font-family:var(--serif);color:var(--graphite);font-size:15.5px;line-height:1.55;max-width:76ch;margin:0 0 18px}
+.note.small{font-size:14px}
+.panel{background:var(--glass);border:1px solid var(--hair);border-radius:8px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--hair)}
+.filters label{font-size:13px;color:var(--graphite);display:flex;gap:6px;align-items:center}
+.filters .count{margin-left:auto;font-size:13px;color:var(--graphite)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--hair);vertical-align:top}
+th{font-weight:600;font-size:13px;color:var(--graphite);white-space:nowrap}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+th button.sort{all:unset;cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+th button.sort:focus-visible{outline:2px solid var(--v-OpenAI)}
+th[aria-sort=ascending] .arr::after{content:"▲";font-size:9px}
+th[aria-sort=descending] .arr::after{content:"▼";font-size:9px}
+.runname{display:flex;gap:8px;align-items:center;font-weight:600;white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block}
+.sub{display:block;font-weight:400;color:var(--faint);font-size:12.5px}
+.tag{display:inline-block;font-size:12px;line-height:1.3;padding:1px 7px;border-radius:10px;border:1px solid var(--hair);color:var(--graphite);white-space:nowrap;margin:1px 4px 1px 0}
+.tag.flag{border-color:var(--signal);color:var(--signal)}
+.tag.tie{border-color:var(--graphite)}
+.na{color:var(--faint)}
+.key{display:block;font-family:var(--serif);font-size:14px;color:var(--graphite);min-width:280px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--graphite);margin:0 0 10px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+.matrix td.cell{text-align:center;font-variant-numeric:tabular-nums;font-size:13px;padding:7px 4px;min-width:38px;border-left:2px solid var(--glass)}
+.matrix th.grp{text-align:center;border-bottom:0;padding-bottom:0}
+.matrix th.k{text-align:center;padding:4px;font-size:12px}
+.c100{background:var(--r3);color:#fff}.c75{background:var(--r1);color:#0d2340}.c50{background:color-mix(in srgb,var(--r1) 45%,var(--glass))}.c25,.c0{background:var(--glass);outline:1px solid var(--signal)}
+:root[data-theme=dark] .c75{color:#e6edf0}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .c75{color:#e6edf0}}
+.totbar{display:flex;align-items:center;gap:8px;min-width:170px}
+.totbar i{display:block;height:8px;background:var(--bar);border-radius:0 4px 4px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid2>*,.grid3>*{min-width:0}
+.chart{padding:16px 18px}
+.chart h3{font-size:16px;margin:0 0 2px;font-weight:600}
+.chart .cap{font-family:var(--serif);font-size:13.5px;color:var(--graphite);margin:0 0 12px}
+.hbar{display:grid;grid-template-columns:150px 1fr 92px;gap:10px;align-items:center;margin:7px 0;font-size:13.5px}
+.hbar .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--graphite);font-size:13px}
+.track{position:relative;height:14px}
+.seg{position:absolute;top:0;height:14px}
+.seg:first-child{border-radius:0}
+.seg.end{border-radius:0 4px 4px 0}
+.seg.hatch{background:repeating-linear-gradient(135deg,var(--bar2) 0 3px,transparent 3px 6px);border:1px solid var(--bar2)}
+.strip{position:relative;height:30px;border-bottom:1px solid var(--hair);margin:4px 0 22px}
+.strip .pt{position:absolute;top:8px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;border:2px solid var(--glass);cursor:default}
+.strip .tick{position:absolute;top:31px;font-size:11.5px;color:var(--faint);transform:translateX(-50%)}
+.ttft-row td{font-size:13.5px}
+svg text{fill:var(--graphite);font-family:var(--sans)}
+svg .lab{font-size:12px;fill:var(--ink)}
+svg .grid{stroke:var(--hair);stroke-width:1}
+.lighttable{position:relative;padding:22px;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--glass) 100%,#fff 0%),var(--table) 75%);border:1px solid var(--hair);border-radius:10px}
+.plates{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.plate{margin:0;position:relative}
+.plate .frame{position:relative;background:#05070b;padding:10px;border-radius:3px;box-shadow:0 0 0 1px var(--hair),0 14px 30px -18px rgba(10,30,45,.55)}
+.plate .frame::before,.plate .frame::after{content:"";position:absolute;width:16px;height:16px;border:1px solid var(--faint);pointer-events:none}
+.plate .frame::before{top:-7px;left:-7px;border-right:0;border-bottom:0}
+.plate .frame::after{bottom:-7px;right:-7px;border-left:0;border-top:0}
+.plate img{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain;margin:0 auto}
+.plate.narrow img{max-width:300px}
+.plate figcaption{font-family:var(--serif);font-size:14px;color:var(--graphite);margin-top:10px;line-height:1.45}
+.plate figcaption b{font-family:var(--sans);color:var(--ink)}
+.plate .defect{color:var(--signal)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.seg-ctl{display:flex;flex-wrap:wrap;border:1px solid var(--hair);border-radius:6px;overflow:hidden}
+.seg-ctl button{border:0;border-radius:0;border-right:1px solid var(--hair);background:var(--glass);padding:6px 10px;font-size:13px}
+.seg-ctl button:last-child{border-right:0}
+.seg-ctl button[aria-pressed=true]{background:var(--ink);color:var(--glass)}
+.detail{padding:20px 22px}
+.detail h3{font-size:22px;margin:0;font-weight:600}
+.kv{display:grid;grid-template-columns:200px 1fr;gap:6px 16px;font-size:14px;margin:12px 0}
+.kv dt{color:var(--graphite)}
+.kv dd{margin:0;overflow-wrap:anywhere}
+.detail h4{font-size:15px;margin:22px 0 6px;font-weight:600}
+.ev{font-family:var(--serif);font-size:14px;color:var(--graphite)}
+ul.list{margin:4px 0;padding-left:18px;font-family:var(--serif);font-size:14.5px}
+ul.list li{margin:4px 0}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;overflow-wrap:anywhere;word-break:break-all}
+.method p,.method li{font-family:var(--serif);font-size:15px;line-height:1.55;max-width:80ch}
+#tip{position:fixed;z-index:20;pointer-events:none;background:var(--ink);color:var(--glass);font-size:13px;line-height:1.4;padding:7px 10px;border-radius:5px;max-width:320px;opacity:0;transition:opacity .1s}
+#tip.on{opacity:1}
+footer{padding:40px 0 60px;color:var(--faint);font-size:13px}
+@media (max-width:980px){.verdict{grid-template-columns:1fr 1fr}.verdict p:nth-child(3){padding-left:0;border-left:0}.grid3{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+@media (max-width:640px){.wrap{padding:0 16px}h1{font-size:33px}.verdict{grid-template-columns:1fr}.verdict p,.verdict p+p{padding:12px 0;border-left:0;border-top:1px solid var(--hair)}.verdict p:first-child{border-top:0}.plates{grid-template-columns:1fr}.hbar{grid-template-columns:104px 1fr 74px}.kv{grid-template-columns:1fr}.kv dt{margin-top:6px}.filters .count{margin-left:0;width:100%}}
+
+.showcase{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.card{margin:0;background:var(--glass);border:1px solid var(--hair);border-radius:8px;overflow:hidden}
+.card button.zoom{all:unset;display:block;cursor:zoom-in;background:#05070b;width:100%}
+.card button.zoom:focus-visible{outline:2px solid var(--v-OpenAI);outline-offset:-2px}
+.card img{display:block;width:100%;height:auto}
+.card figcaption{padding:12px 14px;font-size:14px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.card figcaption .ev{font-size:13.5px}
+.plate img{cursor:zoom-in}
+#lightbox{position:fixed;inset:0;z-index:30;background:rgba(4,6,10,.94);display:none;flex-direction:column}
+#lightbox.on{display:flex}
+#lightbox .bar{display:flex;gap:10px;align-items:center;padding:10px 16px;color:#dfe6ea;font-size:14px}
+#lightbox .bar .cap{flex:1;font-family:var(--serif)}
+#lightbox .bar button{background:#1b232a;color:#e6edf0;border-color:#33414b}
+#lightbox .stage{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:0 16px 16px}
+#lightbox .stage img{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in}
+#lightbox.actual .stage{align-items:flex-start;justify-content:flex-start}
+#lightbox.actual .stage img{max-width:none;max-height:none;cursor:zoom-out}
+@media (max-width:640px){.showcase{grid-template-columns:1fr}}
+
+.craft-sup{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.craft-sup article{background:var(--glass);border:1px solid var(--hair);border-radius:8px;padding:14px 16px}
+.craft-sup h3{font-size:13px;color:var(--graphite);font-weight:600;margin:0 0 6px}
+.craft-sup .who{font-size:17px;font-weight:600;display:flex;gap:8px;align-items:center}
+.craft-sup p{font-family:var(--serif);font-size:14px;color:var(--graphite);margin:8px 0 0;line-height:1.5}
+.tier{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:12px 16px;border-top:1px solid var(--hair)}
+.tier:first-child{border-top:0}
+.tier b{font-weight:600}
+.tier .ids{display:flex;flex-wrap:wrap;gap:8px 16px}
+@media (max-width:980px){.craft-sup{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.craft-sup{grid-template-columns:1fr}.tier{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="tip" role="tooltip"></div>
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Full-resolution image"><div class="bar"><span class="cap" id="lbCap"></span><button type="button" id="lbPrev">Previous</button><button type="button" id="lbNext">Next</button><button type="button" id="lbSize">Actual size</button><button type="button" id="lbClose">Close</button></div><div class="stage"><img id="lbImg" alt=""></div></div>
+<div class="wrap">
+<header class="top">
+  <div class="titlerow">
+    <div><h1 id="title"></h1><p class="lede" id="lede"></p></div>
+    <div class="actions"><button type="button" id="exportCsv">Download CSV</button><button type="button" id="exportJson">Download JSON</button><button type="button" id="theme" aria-label="Switch color theme">Theme: auto</button></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+</header>
+</div>
+<nav class="sections" aria-label="Sections"><div class="wrap"><ul>
+<li><a href="#leaderboard">Leaderboard</a></li><li><a href="#quality">Quality</a></li><li><a href="#craft">Code craft</a></li><li><a href="#timing">Time</a></li><li><a href="#tokens">Tokens</a></li><li><a href="#costs">Cost</a></li><li><a href="#size">Size</a></li><li><a href="#tradeoffs">Trade-offs</a></li><li><a href="#showcase">Showcase</a></li><li><a href="#plates">Plates</a></li><li><a href="#runs">Run evidence</a></li><li><a href="#method">Method</a></li>
+</ul></div></nav>
+<main class="wrap">
+<section id="leaderboard"><h2>Leaderboard</h2>
+  <p class="note">Every evaluated run, plus a row for missing expected models. Missing values sort last in either direction. Cost shows each run’s full session with its basis.</p>
+  <div class="panel"><div class="filters">
+    <label>Model <input type="search" id="fText" placeholder="Filter by name" autocomplete="off"></label>
+    <label>Vendor <select id="fVendor"><option value="">All</option></select></label>
+    <label>Status <select id="fStatus"><option value="">All</option><option value="evaluated">Evaluated</option><option value="contradicted">Effort contradicted</option><option value="costna">Cost N/A</option><option value="ttftna">TTFT N/A</option><option value="missing">Missing expected</option></select></label>
+    <button type="button" id="fReset">Reset filters</button><span class="count" id="fCount" aria-live="polite"></span>
+  </div><div class="scroll"><table id="lb"><thead></thead><tbody></tbody></table></div></div>
+</section>
+<section id="quality"><h2>Quality breakdown</h2>
+  <p class="note">Points per subcriterion under the frozen rubric. Each cell is one rubric anchor. Runs within 2 points of the leader are a practical tie. Select a row for its evidence.</p>
+  <div class="legend"><span><i class="sw" style="background:var(--r3)"></i>100% of points</span><span><i class="sw" style="background:var(--r1)"></i>75%</span><span><i class="sw" style="outline:1px solid var(--signal)"></i>50% or less</span></div>
+  <div class="panel scroll"><table class="matrix" id="matrix"></table></div>
+</section>
+<section id="craft"><h2>Code craft</h2>
+  <p class="note" id="craftNote"></p>
+  <div class="craft-sup" id="craftSup"></div>
+  <div class="panel" id="craftTiers"></div>
+</section>
+<section id="timing"><h2>Timing and latency</h2>
+  <p class="note">Three separate measures, each on its own scale and never stacked: elapsed time to first delivery, time to the first write of the deliverable, and time to the first visible non-reasoning text. Each is measured from its own session record.</p>
+  <div class="panel chart"><div class="legend" id="vendorLegend"></div><div id="strips"></div></div>
+  <div class="panel chart" style="margin-top:18px"><h3>Time to first token</h3><p class="cap">Definitions differ by harness, so values are grouped by definition and not ranked across groups.</p><div class="scroll"><table id="ttft"></table></div></div>
+</section>
+<section id="tokens"><h2>Token composition</h2>
+  <p class="note">Input and output use separate scales; cache read and write sit inside the input they belong to. Runs whose input accounting is unverified are drawn hatched and are not comparable.</p>
+  <div class="grid2">
+    <div class="panel chart"><h3>Input tokens</h3><div class="legend"><span><i class="sw" style="background:var(--bar3)"></i>Uncached</span><span><i class="sw" style="background:var(--bar)"></i>Cache write</span><span><i class="sw" style="background:var(--bar2)"></i>Cache read</span><span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--bar2) 0 3px,transparent 3px 6px)"></i>Unsplit, unverified</span></div><div id="tokIn"></div></div>
+    <div class="panel chart"><h3>Output tokens</h3><div class="legend"><span><i class="sw" style="background:var(--bar3)"></i>Reasoning</span><span><i class="sw" style="background:var(--bar2)"></i>Non-reasoning</span></div><div id="tokOut"></div></div>
+  </div>
+  <div class="panel" style="margin-top:18px"><div class="scroll"><table id="tokTable"></table></div></div>
+</section>
+<section id="costs"><h2>Session cost</h2>
+  <p class="note">Total originating-session cost per run with its basis. API-equivalent values apply official list prices to recorded usage; they are estimates, not bills. Unavailable values are N/A with a reason, never zero.</p>
+  <div class="grid2">
+    <div class="panel chart"><h3>Full originating session</h3><p class="cap">A tick marks the scored attempt where it differs.</p><div id="costBars"></div></div>
+    <div class="panel chart"><h3>Combined, by basis</h3><p class="cap">Bases are never added together.</p><div id="costTotals"></div></div>
+  </div>
+  <div class="panel" style="margin-top:18px"><div class="scroll"><table id="costTable"></table></div></div>
+</section>
+<section id="size"><h2>Artifact size</h2>
+  <p class="note">Measured on the exact graded entry file. Size is descriptive and does not determine quality.</p>
+  <div class="grid2"><div class="panel chart"><h3>Entry file size</h3><div id="sizeBars"></div></div><div class="panel"><div class="scroll"><table id="sizeTable"></table></div></div></div>
+</section>
+<section id="tradeoffs"><h2>Quality against time and cost</h2>
+  <p class="note">Descriptive scatters; there is no blended score.</p>
+  <div class="grid2"><div class="panel chart"><h3>Quality vs elapsed time</h3><div id="scTime"></div></div><div class="panel chart"><h3>Quality vs API-equivalent cost</h3><p class="cap" id="scCostCap"></p><div id="scCost"></div></div></div>
+</section>
+<section id="showcase"><h2>Showcase</h2>
+  <p class="note" id="showNote"></p>
+  <div class="showcase" id="showcaseGrid"></div>
+</section>
+<section id="plates"><h2>Plates</h2>
+  <p class="note">Captured frames from the same machine, browser and gestures. Choose two runs and a view; select an image to expand it.</p>
+  <div class="controls"><label>Left <select id="pA"></select></label><label>Right <select id="pB"></select></label><div class="seg-ctl" id="pView" role="group" aria-label="View"></div></div>
+  <div class="lighttable"><div class="plates" id="plateBox"></div></div>
+</section>
+<section id="runs"><h2>Run evidence</h2>
+  <div class="controls"><label>Run <select id="rSel"></select></label></div>
+  <div class="panel detail" id="detail"></div>
+</section>
+<section id="method" class="method"><h2>Method and limitations</h2><div id="methodBody"></div></section>
+</main>
+<div class="wrap"><footer id="foot"></footer></div>
+<script id="imgs" type="application/json">__IMGS__</script>
+<script id="data" type="application/json">__DATA__</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent), IMG = JSON.parse(document.getElementById('imgs').textContent);
+const R = D.runs, byId = Object.fromEntries(R.map(r => [r.id, r]));
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num = (n) => n == null ? null : Number(n).toLocaleString('en-US');
+const money = (v, d = 2) => v == null ? null : '$' + Number(v).toFixed(d);
+const NA = (txt = 'N/A', why = '') => '<span class="na"' + (why ? ' data-tip="' + esc(why) + '" tabindex="0"' : '') + '>' + txt + '</span>';
+const VEND = [...new Set(R.map(r => r.vendor))]; const VC = ['#2a78d6', '#eb6834', '#1baf7a']; const vcol = (v) => VEND.indexOf(v) < 3 ? VC[VEND.indexOf(v)] : '#7a8790';
+const dot = (r) => '<i class="dot" style="background:' + vcol(r.vendor) + '"></i>';
+const costFull = (r) => r.cost.client ?? r.cost.apiFull;
+const basis = (r) => r.cost.client != null && r.cost.apiFull != null ? 'client estimate; API-equivalent ' + money(r.cost.apiFull) : r.cost.client != null ? 'client estimate' : r.cost.apiFull != null ? 'API-equivalent' : null;
+const status = (r) => { const s = [r.quality.status === 'evaluated' ? 'evaluated' : r.quality.status]; if (r.effort.status === 'contradicted') s.push('contradicted'); if (costFull(r) == null) s.push('costna'); if (!r.latency.ttft) s.push('ttftna'); return s; };
+const ttftLabel = (r) => r.latency.ttft ? (r.latency.ttft.ms / 1000).toFixed(2) + ' s' : null;
+const GROUPS = {codex: 'Codex client time_to_first_token_ms for the turn', agy: 'Antigravity request-step creation to first streamed chunk'};
+// tooltip, lightbox, theme
+const tip = $('#tip');
+function showTip(el) { const t = el.getAttribute('data-tip'); if (!t) return; tip.innerHTML = t; tip.classList.add('on'); const b = el.getBoundingClientRect(); const w = tip.offsetWidth, h = tip.offsetHeight; let x = b.left + b.width / 2 - w / 2, y = b.top - h - 8; if (y < 8) y = b.bottom + 8; tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x)) + 'px'; tip.style.top = y + 'px'; }
+document.addEventListener('mouseover', e => { const el = e.target.closest('[data-tip]'); if (el) showTip(el); });
+document.addEventListener('mouseout', e => { if (e.target.closest('[data-tip]')) tip.classList.remove('on'); });
+document.addEventListener('focusin', e => { const el = e.target.closest('[data-tip]'); if (el) showTip(el); });
+document.addEventListener('focusout', () => tip.classList.remove('on'));
+const LBX = {items: [], i: 0, opener: null};
+function showLB() { const it = LBX.items[LBX.i]; $('#lbImg').src = it.src; $('#lbImg').alt = it.cap; $('#lbCap').textContent = it.cap + '  (' + (LBX.i + 1) + ' of ' + LBX.items.length + ')'; $('#lbPrev').disabled = $('#lbNext').disabled = LBX.items.length < 2; }
+function openLB(items, i) { LBX.items = items.filter(x => x.src); LBX.i = Math.min(i, LBX.items.length - 1); if (!LBX.items.length) return; LBX.opener = document.activeElement; $('#lightbox').classList.add('on'); $('#lightbox').classList.remove('actual'); $('#lbSize').textContent = 'Actual size'; showLB(); $('#lbClose').focus(); }
+function closeLB() { $('#lightbox').classList.remove('on'); $('#lbImg').removeAttribute('src'); if (LBX.opener) LBX.opener.focus(); }
+function stepLB(d) { LBX.i = (LBX.i + d + LBX.items.length) % LBX.items.length; showLB(); }
+function sizeLB() { const a = $('#lightbox').classList.toggle('actual'); $('#lbSize').textContent = a ? 'Fit to screen' : 'Actual size'; }
+$('#lbClose').addEventListener('click', closeLB); $('#lbPrev').addEventListener('click', () => stepLB(-1)); $('#lbNext').addEventListener('click', () => stepLB(1)); $('#lbSize').addEventListener('click', sizeLB); $('#lbImg').addEventListener('click', sizeLB);
+$('#lightbox').addEventListener('click', e => { if (e.target.classList.contains('stage')) closeLB(); });
+document.addEventListener('keydown', e => { if (!$('#lightbox').classList.contains('on')) return; if (e.key === 'Escape') closeLB(); else if (e.key === 'ArrowRight') stepLB(1); else if (e.key === 'ArrowLeft') stepLB(-1); });
+const themeBtn = $('#theme'), modes = ['auto', 'light', 'dark']; let mode = 0;
+themeBtn.addEventListener('click', () => { mode = (mode + 1) % 3; const m = modes[mode]; if (m === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', m); themeBtn.textContent = 'Theme: ' + m; });
+// header + verdict
+$('#title').textContent = D.meta.title; $('#lede').textContent = D.meta.lede || '';
+(function () {
+  const t = D.totals, ties = R.filter(r => r.tie), withTime = R.filter(r => r.elapsedSec != null).sort((a, b) => a.elapsedSec - b.elapsedSec);
+  const cheap = R.filter(r => r.cost.apiFull != null).sort((a, b) => a.cost.apiFull - b.cost.apiFull)[0], contra = R.filter(r => r.effort.status === 'contradicted');
+  const q = ties.length ? '<b>Practical tie</b> between ' + ties.map(r => esc(r.model) + ' ' + r.quality.total).join(', ') + ' (within 2 points).' : '<b>' + esc(R[0].model) + '</b> leads with ' + R[0].quality.total + '; the next run is more than 2 points behind.';
+  $('#verdict').innerHTML = '<p><span class="what">Quality</span>' + q + '</p>' +
+    '<p><span class="what">Elapsed time to first delivery</span>' + (withTime.length ? 'Fastest <b>' + esc(withTime[0].model) + '</b> at ' + withTime[0].elapsedMin + ' min; slowest ' + esc(withTime[withTime.length - 1].model) + ' at ' + withTime[withTime.length - 1].elapsedMin + ' min.' : 'Not available.') + '</p>' +
+    '<p><span class="what">Session cost</span>Verified bills: ' + t.billed.coverage + '. API-equivalent <b>' + (money(t.apiEquivalentFull.value) ?? 'N/A') + '</b> for ' + t.apiEquivalentFull.coverage + (t.lowerBound.value != null ? '; partial lower bound ≥ ' + money(t.lowerBound.value) + ' for ' + t.lowerBound.coverage : '') + '.' + (cheap ? ' Lowest: ' + esc(cheap.model) + ' ' + money(cheap.cost.apiFull) + '.' : '') + '</p>' +
+    '<p><span class="what">Coverage</span>' + D.inventory.expected + ' expected, ' + D.inventory.discovered + ' discovered, <b>' + D.inventory.evaluated + ' evaluated</b>, ' + D.inventory.blocked + ' blocked, ' + D.inventory.missing.length + ' missing, ' + D.inventory.dnf + ' DNF.' + (R.some(r => r.quality.provisional) ? ' Some scores are provisional.' : ' No score is provisional.') + (contra.length ? ' Effort contradicted the reported setting for ' + contra.map(r => esc(r.model)).join(', ') + '.' : '') + '</p>';
+  $('#vendorLegend').innerHTML = VEND.map(v => '<span><i class="dot" style="background:' + vcol(v) + '"></i>' + esc(v) + '</span>').join('');
+  $('#fVendor').innerHTML += VEND.map(v => '<option>' + esc(v) + '</option>').join('');
+})();
+// leaderboard
+const COLS = [
+  {k: 'rank', l: 'Rank', num: 1, v: r => r.rank, h: r => r.rank + (r.tie ? ' <span class="tag tie" data-tip="Within 2 points of the leader" tabindex="0">tie</span>' : '')},
+  {k: 'model', l: 'Model / run', v: r => r.model, h: r => '<span class="runname">' + dot(r) + esc(r.model) + '</span><span class="sub">' + r.id + ' · ' + esc(r.folder) + '</span>'},
+  {k: 'total', l: 'Quality', num: 1, v: r => r.quality.total, h: r => '<b>' + r.quality.total + '</b><span class="sub">' + (r.quality.provisional ? 'provisional, up to ' + r.quality.possibleMax : 'of 100') + '</span>'},
+  {k: 'status', l: 'Status', v: r => status(r).length, h: r => '<span class="tag">' + esc(r.quality.status) + '</span>' + (r.effort.status === 'contradicted' ? '<span class="tag flag" data-tip="' + esc(r.effort.recorded) + '" tabindex="0">effort contradicted</span>' : '') + (costFull(r) == null ? '<span class="tag" data-tip="' + esc(r.cost.note || '') + '" tabindex="0">cost N/A</span>' : '')},
+  {k: 'elapsed', l: 'Elapsed', num: 1, v: r => r.elapsedSec, h: r => r.elapsedMin != null ? r.elapsedMin + ' min' : NA()},
+  {k: 'ttft', l: 'TTFT', num: 1, v: r => r.latency.ttft ? r.latency.ttft.ms : null, h: r => r.latency.ttft ? ttftLabel(r) + '<span class="sub">' + esc(r.latency.ttft.group) + ' definition</span>' : NA('N/A', r.latency.ttftNote)},
+  {k: 'cost', l: 'Session cost', num: 1, v: r => costFull(r), h: r => costFull(r) != null ? '<b>' + money(costFull(r)) + '</b><span class="sub">' + esc(basis(r)) + (r.cost.apiScored != null && Math.abs(r.cost.apiScored - costFull(r)) > 0.005 ? '; scored ' + money(r.cost.apiScored) : '') + '</span>' : NA('N/A', r.cost.note) + (r.cost.lowerBound != null ? '<span class="sub">≥ ' + money(r.cost.lowerBound) + ' partial</span>' : '')},
+  {k: 'in', l: 'Input', num: 1, v: r => r.tok && r.tok.I, h: r => r.tok ? num(r.tok.I) + (r.tok.semantics !== 'verified' ? '<span class="sub" data-tip="' + esc(r.tok.semantics) + '" tabindex="0">unverified</span>' : '') : NA()},
+  {k: 'out', l: 'Output', num: 1, v: r => r.tok && r.tok.O, h: r => r.tok ? num(r.tok.O) : NA()},
+  {k: 'reas', l: 'Reasoning', num: 1, v: r => r.tok && r.tok.R, h: r => r.tok && r.tok.R != null ? num(r.tok.R) : NA()},
+  {k: 'ro', l: 'R / O', num: 1, v: r => r.tok && r.tok.ro, h: r => r.tok && r.tok.ro != null ? r.tok.ro + '%' : NA()},
+  {k: 'kib', l: 'KiB', num: 1, v: r => r.art.kib, h: r => r.art.kib ?? NA()},
+  {k: 'lines', l: 'Lines', num: 1, v: r => r.art.physicalLines, h: r => num(r.art.physicalLines) ?? NA()},
+  {k: 'key', l: 'Key finding', v: r => r.key, h: r => '<span class="key">' + esc(r.key) + '</span>'},
+];
+const LB = {sort: 'rank', dir: 1};
+function renderLB() {
+  const text = $('#fText').value.trim().toLowerCase(), ven = $('#fVendor').value, st = $('#fStatus').value;
+  const rows = R.filter(r => (!text || (r.model + ' ' + r.folder + ' ' + r.id).toLowerCase().includes(text)) && (!ven || r.vendor === ven) && (!st || status(r).includes(st)));
+  const c = COLS.find(c => c.k === LB.sort);
+  rows.sort((a, b) => { const x = c.v(a), y = c.v(b); if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1; return (typeof x === 'string' ? x.localeCompare(y) : x - y) * LB.dir; });
+  $('#lb thead').innerHTML = '<tr>' + COLS.map(c => '<th class="' + (c.num ? 'num' : '') + '"' + (LB.sort === c.k ? ' aria-sort="' + (LB.dir > 0 ? 'ascending' : 'descending') + '"' : '') + ' scope="col"><button class="sort" data-k="' + c.k + '">' + c.l + '<span class="arr"></span></button></th>').join('') + '</tr>';
+  const miss = D.inventory.missing, showMissing = !ven && (!st || st === 'missing') && (!text || 'missing expected'.includes(text));
+  let body = st === 'missing' ? '' : rows.map(r => '<tr>' + COLS.map(c => '<td class="' + (c.num ? 'num' : '') + '">' + c.h(r) + '</td>').join('') + '</tr>').join('');
+  if (showMissing) body += '<tr><td class="num">—</td><td colspan="' + (COLS.length - 1) + '"><b>Missing expected models:</b> ' + (miss.length ? miss.map(esc).join(', ') : 'none — every expected model was found and evaluated') + '.</td></tr>';
+  $('#lb tbody').innerHTML = body || '<tr><td colspan="' + COLS.length + '" class="ev">No runs match these filters. Use Reset filters to show all.</td></tr>';
+  const shown = st === 'missing' ? 0 : rows.length;
+  $('#fCount').textContent = 'Showing ' + shown + ' of ' + R.length + ' runs' + (shown < R.length ? ' (filtered; summaries above describe all runs)' : '');
+  $('#lb thead').querySelectorAll('button.sort').forEach(b => b.addEventListener('click', () => { const k = b.dataset.k; if (LB.sort === k) LB.dir *= -1; else { LB.sort = k; LB.dir = k === 'total' ? -1 : 1; } renderLB(); }));
+}
+['#fText', '#fVendor', '#fStatus'].forEach(s => $(s).addEventListener('input', renderLB));
+$('#fReset').addEventListener('click', () => { $('#fText').value = ''; $('#fVendor').value = ''; $('#fStatus').value = ''; LB.sort = 'rank'; LB.dir = 1; renderLB(); });
+renderLB();
+// quality matrix
+(function () {
+  const cats = [...new Set(D.rubric.map(x => x.c))];
+  let h = '<thead><tr><th rowspan="2">Run</th>' + cats.map(g => '<th class="grp" colspan="' + D.rubric.filter(x => x.c === g).length + '">' + g + ' (' + D.rubric.filter(x => x.c === g).reduce((s, x) => s + x.max, 0) + ')</th>').join('') + '<th rowspan="2" class="num">Total</th></tr><tr>' + D.rubric.map(x => '<th class="k" data-tip="' + esc(x.label) + ' — max ' + x.max + '" tabindex="0">' + x.k + '</th>').join('') + '</tr></thead><tbody>';
+  for (const r of R) h += '<tr data-run="' + r.id + '" style="cursor:pointer"><td><span class="runname">' + dot(r) + esc(r.model) + '</span>' + (r.tie ? '<span class="sub">practical tie for first</span>' : '') + '</td>' + D.rubric.map(x => { const s = r.quality.sub[x.k]; const p = s.notVerified ? 0 : Math.round(s.pct / 25) * 25; return '<td class="cell c' + p + '" tabindex="0" data-tip="<b>' + x.k + ' ' + esc(x.label) + '</b><br>' + (s.notVerified ? 'not verified' : s.pts + ' / ' + s.max + ' (' + s.pct + '%)') + '<br>' + esc(s.evidence) + '">' + (s.notVerified ? '?' : s.pts) + '</td>'; }).join('') + '<td class="num"><div class="totbar"><i style="width:' + (r.quality.total * 0.6) + 'px"></i><b>' + r.quality.total + '</b></div></td></tr>';
+  $('#matrix').innerHTML = h + '</tbody>';
+  $('#matrix').addEventListener('click', e => { const tr = e.target.closest('tr[data-run]'); if (tr) { $('#rSel').value = tr.dataset.run; renderDetail(); location.hash = 'runs'; } });
+})();
+// code craft
+(function () {
+  const C = D.craft; if (!C) { $('#craft').querySelector('.note').textContent = 'No code-craft analysis was recorded for this benchmark.'; return; }
+  $('#craftNote').textContent = (C.question || 'Who wrote the most intricate, top-tier code?') + ' This lens is unscored and separate from rubric category E, which rewards maintainability rather than ambition; a sophisticated solution can top this section and still lose E points.';
+  $('#craftSup').innerHTML = (C.superlatives || []).map(s => { const r = byId[s.id]; return '<article><h3>' + esc(s.title) + '</h3><div class="who">' + (r ? dot(r) + esc(r.model) : esc(s.id)) + '</div><p>' + esc(s.why) + '</p></article>'; }).join('');
+  $('#craftTiers').innerHTML = (C.tiers || []).map(t => '<div class="tier"><b>' + esc(t.tier) + '</b><div><div class="ids">' + t.ids.map(id => { const r = byId[id]; return r ? '<span class="runname" data-tip="' + esc((C.runs && C.runs[id] && C.runs[id].summary) || '') + '" tabindex="0">' + dot(r) + esc(r.model) + ' <span class="sub" style="display:inline">E ' + r.quality.categories.E + '/10</span></span>' : esc(id); }).join('') + '</div><p class="ev" style="margin:6px 0 0">' + esc(t.note || '') + '</p></div></div>').join('');
+})();
+// timing
+(function () {
+  const mk = (title, cap, get, unit) => { const pts = R.filter(r => get(r) != null); if (!pts.length) return '<div><h3>' + title + '</h3><p class="cap">Not available.</p></div>'; const mx = Math.max(1, Math.ceil(Math.max(...pts.map(get)) / 5) * 5); let s = '<h3>' + title + '</h3><p class="cap">' + cap + '</p><div class="strip">'; for (const r of pts) s += '<span class="pt" tabindex="0" style="left:' + (100 * get(r) / mx) + '%;background:' + vcol(r.vendor) + '" data-tip="<b>' + esc(r.model) + '</b><br>' + get(r).toFixed(1) + ' ' + unit + '"></span>'; for (let t = 0; t <= mx + 1e-9; t += mx / 5) s += '<span class="tick" style="left:' + (100 * t / mx) + '%">' + Math.round(t) + '</span>'; s += '</div><div class="scroll"><table><tbody>' + [...pts].sort((a, b) => get(a) - get(b)).map(r => '<tr><td>' + dot(r) + ' ' + esc(r.model) + '</td><td class="num">' + get(r).toFixed(1) + ' ' + unit + '</td></tr>').join('') + R.filter(r => get(r) == null).map(r => '<tr><td>' + dot(r) + ' ' + esc(r.model) + '</td><td class="num">' + NA() + '</td></tr>').join('') + '</tbody></table></div>'; return '<div>' + s + '</div>'; };
+  $('#strips').innerHTML = '<div class="grid3">' + mk('Elapsed to first delivery', 'Task submission to first completed delivery.', r => r.elapsedSec != null ? r.elapsedSec / 60 : null, 'min') + mk('First write of the deliverable', 'Task submission to the first recorded write.', r => r.latency.firstWriteSec != null ? r.latency.firstWriteSec / 60 : null, 'min') + mk('First visible text', 'First non-reasoning assistant text.', r => r.latency.firstVisibleSec != null ? r.latency.firstVisibleSec / 60 : null, 'min') + '</div>';
+  const groups = [...new Set(R.map(r => r.latency.ttft ? r.latency.ttft.group : null))];
+  $('#ttft').innerHTML = '<thead><tr><th>Definition</th><th>Run</th><th class="num">Initial request</th><th class="num">Per-request median</th><th class="num">p95</th><th class="num">Samples / coverage</th></tr></thead><tbody>' + groups.map(g => { const rs = R.filter(r => (r.latency.ttft ? r.latency.ttft.group : null) === g); return rs.map((r, i) => '<tr class="ttft-row">' + (i === 0 ? '<td rowspan="' + rs.length + '" class="ev">' + esc(g ? (GROUPS[g] || r.latency.ttft.def) : 'Not recorded by the harness') + '</td>' : '') + '<td>' + dot(r) + ' ' + esc(r.model) + '</td><td class="num">' + (ttftLabel(r) ?? NA('N/A', r.latency.ttftNote)) + '</td><td class="num">' + (r.latency.perRequest ? (r.latency.perRequest.median_ms / 1000).toFixed(2) + ' s' : NA('N/A', r.latency.perRequestNote)) + '</td><td class="num">' + (r.latency.perRequest ? (r.latency.perRequest.p95_ms / 1000).toFixed(2) + ' s' : NA()) + '</td><td class="num">' + (r.latency.perRequest ? r.latency.perRequest.n + ' (' + r.latency.perRequest.coverage + ')' : NA()) + '</td></tr>').join(''); }).join('') + '</tbody>';
+})();
+// tokens
+(function () {
+  const T = R.filter(r => r.tok); if (!T.length) return; const mxI = Math.max(...T.map(r => r.tok.I)), mxO = Math.max(...T.map(r => r.tok.O));
+  const bar = (r, segs, mx, label) => '<div class="hbar"><span class="lbl">' + dot(r) + ' ' + esc(r.model) + '</span><span class="track">' + (() => { let x = 0; return segs.map((s, i) => { const w = 100 * (s.v || 0) / mx; const el = '<span class="seg' + (s.hatch ? ' hatch' : '') + (i === segs.length - 1 ? ' end' : '') + '" tabindex="0" style="left:' + x + '%;width:' + w + '%;background:' + (s.hatch ? '' : s.c) + '" data-tip="<b>' + esc(r.model) + '</b><br>' + s.n + ': ' + num(s.v) + '"></span>'; x += w; return el; }).join(''); })() + '</span><span class="val">' + label + '</span></div>';
+  $('#tokIn').innerHTML = T.map(r => r.tok.uncached == null ? bar(r, [{v: r.tok.I, n: 'Recorded input (unverified)', hatch: 1}], mxI, num(r.tok.I)) : bar(r, [{v: r.tok.uncached, n: 'Uncached input', c: 'var(--bar3)'}, {v: r.tok.cacheWrite, n: 'Cache write', c: 'var(--bar)'}, {v: r.tok.cacheRead, n: 'Cache read', c: 'var(--bar2)'}], mxI, num(r.tok.I))).join('');
+  $('#tokOut').innerHTML = T.map(r => r.tok.R != null ? bar(r, [{v: r.tok.R, n: 'Reasoning', c: 'var(--bar3)'}, {v: r.tok.N, n: 'Non-reasoning', c: 'var(--bar2)'}], mxO, num(r.tok.O)) : bar(r, [{v: r.tok.O, n: 'Output (reasoning not reported)', c: 'var(--bar)'}], mxO, num(r.tok.O))).join('');
+  $('#tokTable').innerHTML = '<thead><tr><th>Run</th><th class="num">Input I</th><th class="num">Uncached</th><th class="num">Cache read</th><th class="num">Cache write</th><th class="num">Output O</th><th class="num">Reasoning R</th><th class="num">N</th><th class="num">R / O</th><th class="num">R / (I+O)</th><th class="num">Cache read / I</th><th>Accounting</th></tr></thead><tbody>' + T.map(r => { const t = r.tok; return '<tr><td><span class="runname">' + dot(r) + esc(r.model) + '</span></td><td class="num">' + num(t.I) + '</td><td class="num">' + (num(t.uncached) ?? NA()) + '</td><td class="num">' + (num(t.cacheRead) ?? NA('N/A', 'Not reported')) + '</td><td class="num">' + (num(t.cacheWrite) ?? NA()) + '</td><td class="num">' + num(t.O) + '</td><td class="num">' + (num(t.R) ?? NA()) + '</td><td class="num">' + (num(t.N) ?? NA()) + '</td><td class="num">' + (t.ro != null ? t.ro + '%' : NA()) + '</td><td class="num">' + (t.rall != null ? t.rall + '%' : NA()) + '</td><td class="num">' + (t.cacheShare != null ? t.cacheShare + '%' : NA()) + '</td><td class="ev" style="min-width:300px">' + esc(t.accounting) + (t.semantics !== 'verified' ? ' ' + esc(t.semantics) : '') + '</td></tr>'; }).join('') + '</tbody>';
+})();
+// costs
+(function () {
+  const t = D.totals, mx = Math.max(0.0001, ...R.map(r => costFull(r) || 0));
+  $('#costBars').innerHTML = [...R].sort((a, b) => (costFull(b) ?? -1) - (costFull(a) ?? -1)).map(r => { const v = costFull(r); if (v == null) return '<div class="hbar"><span class="lbl">' + dot(r) + ' ' + esc(r.model) + '</span><span class="na" style="font-size:13px">N/A — no bar drawn' + (r.cost.lowerBound != null ? '; partial lower bound ≥ ' + money(r.cost.lowerBound) : '') + '</span><span class="val">N/A</span></div>'; const sc = r.cost.apiScored; return '<div class="hbar"><span class="lbl">' + dot(r) + ' ' + esc(r.model) + '</span><span class="track"><span class="seg end" tabindex="0" style="left:0;width:' + (100 * v / mx) + '%;background:var(--bar)" data-tip="<b>' + esc(r.model) + '</b><br>Full session ' + money(v, 4) + ' (' + esc(basis(r)) + ')' + (sc != null && Math.abs(sc - v) > 0.005 ? '<br>Scored attempt ' + money(sc, 4) : '') + '"></span>' + (sc != null && Math.abs(sc - v) > 0.005 ? '<span style="position:absolute;top:-3px;height:20px;width:2px;background:var(--ink);left:' + (100 * sc / mx) + '%" aria-hidden="true"></span>' : '') + '</span><span class="val">' + money(v) + '</span></div>'; }).join('');
+  $('#costTotals').innerHTML = '<table><tbody>' + [['Verified billed', t.billed], ['Client-reported estimate', t.clientEstimate], ['API-equivalent, full sessions', t.apiEquivalentFull], ['API-equivalent, scored attempts', t.apiEquivalentScored], ['Partial lower bound', t.lowerBound]].map(([l, o]) => '<tr><td><b>' + l + '</b></td><td class="num">' + (o.value == null ? NA() : (l.startsWith('Partial') ? '≥ ' : '') + money(o.value)) + '</td><td>' + esc(o.coverage) + '</td></tr>').join('') + '</tbody></table>';
+  $('#costTable').innerHTML = '<thead><tr><th>Run</th><th class="num">Verified bill</th><th class="num">Client estimate</th><th class="num">API-equivalent full</th><th class="num">API-equivalent scored</th><th>Components (scored)</th><th>Formula</th><th>Pricing source</th><th>Quota</th></tr></thead><tbody>' + R.map(r => { const c = r.cost; return '<tr><td><span class="runname">' + dot(r) + esc(r.model) + '</span></td><td class="num">' + NA('N/A', c.billedNote) + '</td><td class="num">' + (c.client != null ? money(c.client, 4) : NA()) + '</td><td class="num">' + (c.apiFull != null ? money(c.apiFull, 4) : NA('N/A', c.note) + (c.lowerBound != null ? '<span class="sub">≥ ' + money(c.lowerBound, 4) + ' partial</span>' : '')) + '</td><td class="num">' + (c.apiScored != null ? money(c.apiScored, 4) : NA()) + '</td><td class="ev">' + Object.entries(c.components || {}).map(([k, v]) => esc(k) + ' ' + money(v, 4)).join('; ') + (c.post ? '; post-delivery ' + money(c.post, 4) : '') + '</td><td class="mono" style="min-width:260px">' + esc(c.formula || '') + '</td><td class="ev" style="min-width:220px">' + esc(c.pricing || '') + '</td><td class="ev" style="min-width:200px">' + esc(c.quota || '') + '</td></tr>'; }).join('') + '</tbody>';
+})();
+// size
+(function () {
+  const S = R.filter(r => r.art.kib != null), mx = Math.max(...S.map(r => r.art.kib));
+  $('#sizeBars').innerHTML = [...S].sort((a, b) => b.art.kib - a.art.kib).map(r => '<div class="hbar"><span class="lbl">' + dot(r) + ' ' + esc(r.model) + '</span><span class="track"><span class="seg end" tabindex="0" style="left:0;width:' + (100 * r.art.kib / mx) + '%;background:var(--bar)" data-tip="<b>' + esc(r.model) + '</b><br>' + num(r.art.bytes) + ' bytes"></span></span><span class="val">' + r.art.kib + ' KiB</span></div>').join('');
+  $('#sizeTable').innerHTML = '<thead><tr><th>Run</th><th class="num">Bytes</th><th class="num">Chars</th><th class="num">Lines</th><th class="num">Nonblank</th><th class="num">Runtime files / bytes</th></tr></thead><tbody>' + R.map(r => '<tr><td><span class="runname">' + dot(r) + esc(r.model) + '</span></td><td class="num">' + (num(r.art.bytes) ?? NA()) + '</td><td class="num">' + (num(r.art.unicodeChars) ?? NA()) + '</td><td class="num">' + (num(r.art.physicalLines) ?? NA()) + '</td><td class="num">' + (num(r.art.nonblankLines) ?? NA()) + '</td><td class="num">' + r.art.authoredRuntimeFiles + ' / ' + num(r.art.authoredRuntimeBytes) + '</td></tr>').join('') + '</tbody>';
+})();
+// scatters
+function scatter(el, pts, xl, xf) {
+  if (!pts.length) { el.innerHTML = '<p class="na">No comparable values.</p>'; return; }
+  const W = 560, H = 330, m = {l: 46, r: 16, t: 14, b: 40}, xmax = Math.max(...pts.map(p => p.x)) * 1.1 || 1;
+  const ylo = Math.floor(Math.min(...pts.map(p => p.y)) / 5) * 5, yhi = Math.min(100, Math.ceil(Math.max(...pts.map(p => p.y)) / 5) * 5 + (Math.max(...pts.map(p => p.y)) % 5 === 0 ? 0 : 0)) || 100, ymin = Math.min(ylo, yhi - 5), ymax = Math.max(yhi, ymin + 5);
+  const X = v => m.l + (W - m.l - m.r) * v / xmax, Y = v => H - m.b - (H - m.t - m.b) * (v - ymin) / (ymax - ymin);
+  let s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="' + esc(xl) + ' versus quality">';
+  const step = (ymax - ymin) / 5; for (let y = ymin; y <= ymax + 1e-9; y += step) s += '<line class="grid" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + Y(y) + '" y2="' + Y(y) + '"/><text x="' + (m.l - 8) + '" y="' + (Y(y) + 4) + '" text-anchor="end" font-size="11">' + (+y.toFixed(1)) + '</text>';
+  for (let i = 0; i <= 5; i++) { const v = xmax * i / 5; s += '<text x="' + X(v) + '" y="' + (H - m.b + 16) + '" text-anchor="middle" font-size="11">' + xf(v) + '</text>'; }
+  s += '<text x="' + ((W + m.l) / 2) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="12">' + esc(xl) + '</text><text transform="translate(12 ' + ((H - m.b) / 2) + ') rotate(-90)" text-anchor="middle" font-size="12">Quality</text>';
+  const placed = [];
+  for (const p of pts) { const cx = X(p.x), cy = Y(p.y); let dy = -10; while (placed.some(q => Math.abs(q[0] - cx) < 90 && Math.abs(q[1] - (cy + dy)) < 13)) dy += 14; placed.push([cx, cy + dy]); const an = cx > W - 150 ? 'end' : 'start'; s += '<circle cx="' + cx + '" cy="' + cy + '" r="6" fill="' + vcol(p.r.vendor) + '" stroke="var(--glass)" stroke-width="2" tabindex="0" data-tip="<b>' + esc(p.r.model) + '</b><br>Quality ' + p.y + '<br>' + esc(xl) + ': ' + xf(p.x) + '"/><text class="lab" x="' + (cx + (an === 'end' ? -9 : 9)) + '" y="' + (cy + dy + 4) + '" text-anchor="' + an + '">' + esc(p.r.model) + '</text>'; }
+  el.innerHTML = s + '</svg>';
+}
+scatter($('#scTime'), R.filter(r => r.elapsedMin != null).map(r => ({r, x: r.elapsedMin, y: r.quality.total})), 'Elapsed time (min)', v => v.toFixed(0));
+const cp = R.filter(r => r.cost.apiFull != null);
+$('#scCostCap').textContent = cp.length + ' of ' + R.length + ' runs.' + (cp.length < R.length ? ' Excluded (no comparable cost): ' + R.filter(r => r.cost.apiFull == null).map(r => r.model).join(', ') + '.' : '');
+scatter($('#scCost'), cp.map(r => ({r, x: r.cost.apiFull, y: r.quality.total})), 'API-equivalent full-session cost (USD)', v => '$' + v.toFixed(v < 10 ? 1 : 0));
+// showcase + plates
+const VIEWS = D.views.length ? D.views : [{key: 'default', label: 'Default', caption: ''}];
+(function () {
+  const sv = D.showcaseView, cap = (VIEWS.find(v => v.key === sv) || {}).caption || '';
+  $('#showNote').textContent = 'Each run’s ' + ((VIEWS.find(v => v.key === sv) || {}).label || sv).toLowerCase() + ' view, ordered by quality score. ' + cap + ' Select an image to see it at full resolution.';
+  const items = R.map(r => ({src: IMG[r.id + '-' + sv], cap: r.model + ' — ' + r.quality.total + '/100'}));
+  $('#showcaseGrid').innerHTML = R.map((r, i) => '<figure class="card">' + (IMG[r.id + '-' + sv] ? '<button type="button" class="zoom" data-i="' + i + '" aria-label="Expand ' + esc(r.model) + '"><img src="' + IMG[r.id + '-' + sv] + '" alt="' + esc(r.model) + '"></button>' : '<p class="na" style="padding:40px 16px">No image captured for this view.</p>') + '<figcaption><span class="runname">' + dot(r) + esc(r.model) + '</span><span class="ev">' + r.quality.total + '/100 · rank ' + r.rank + (r.tie ? ' (tie)' : '') + '</span></figcaption></figure>').join('');
+  $('#showcaseGrid').querySelectorAll('button.zoom').forEach(b => b.addEventListener('click', () => { const i = +b.dataset.i; const avail = items.filter(x => x.src); openLB(avail, avail.indexOf(items[i])); }));
+})();
+let pView = VIEWS[0].key;
+['#pA', '#pB'].forEach((s, i) => { $(s).innerHTML = R.map(r => '<option value="' + r.id + '">' + esc(r.model) + '</option>').join(''); $(s).value = R[Math.min(i, R.length - 1)].id; $(s).addEventListener('change', renderPlates); });
+$('#pView').innerHTML = VIEWS.map(v => '<button type="button" data-v="' + v.key + '" aria-pressed="' + (v.key === pView) + '">' + esc(v.label) + '</button>').join('');
+$('#pView').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b) return; pView = b.dataset.v; $('#pView').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === pView)); renderPlates(); });
+function renderPlates() {
+  const ids = [$('#pA').value, $('#pB').value], view = VIEWS.find(v => v.key === pView) || {};
+  $('#plateBox').innerHTML = ids.map((id, i) => { const r = byId[id], src = IMG[id + '-' + pView], d = (r.defects || {})[pView]; return '<figure class="plate' + (/narrow|mobile|phone/i.test(pView) ? ' narrow' : '') + '"><div class="frame">' + (src ? '<img src="' + src + '" alt="' + esc(r.model) + ': ' + esc(view.caption || '') + '" data-i="' + i + '" tabindex="0">' : '<p style="color:#ccc;padding:30px;font-size:14px">No capture for this view: the plan did not record it for this run.</p>') + '</div><figcaption><b>' + esc(r.model) + '</b> · ' + r.quality.total + '/100. ' + esc(view.caption || '') + (d ? ' <span class="defect">' + esc(d) + '</span>' : '') + ' <a href="#runs" data-run="' + id + '">Evidence</a></figcaption></figure>'; }).join('');
+  const items = ids.map(id => ({src: IMG[id + '-' + pView], cap: byId[id].model + ' — ' + (view.caption || view.label || '')}));
+  $('#plateBox').querySelectorAll('img[data-i]').forEach(im => { const open = () => { const avail = items.filter(x => x.src); openLB(avail, avail.indexOf(items[+im.dataset.i])); }; im.addEventListener('click', open); im.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } }); });
+  $('#plateBox').querySelectorAll('a[data-run]').forEach(a => a.addEventListener('click', () => { $('#rSel').value = a.dataset.run; renderDetail(); }));
+}
+renderPlates();
+// run detail
+$('#rSel').innerHTML = R.map(r => '<option value="' + r.id + '">' + esc(r.model) + ' (' + r.id + ')</option>').join('');
+$('#rSel').addEventListener('change', renderDetail);
+const kv = (pairs) => '<dl class="kv">' + pairs.filter(Boolean).map(([k, v]) => '<dt>' + k + '</dt><dd>' + v + '</dd>').join('') + '</dl>';
+function renderDetail() {
+  const r = byId[$('#rSel').value], l = r.latency, c = r.cost;
+  let h = '<h3>' + dot(r) + ' ' + esc(r.model) + ' — ' + r.quality.total + '/100' + (r.tie ? ' <span class="tag tie">practical tie for first</span>' : '') + '</h3><p class="ev">' + esc(r.key) + '</p>';
+  h += '<h4>Findings</h4><ul class="list">' + r.findings.strengths.map(s => '<li>Strength: ' + esc(s) + '</li>').join('') + r.findings.findings.map(s => '<li style="color:var(--signal)">Finding: ' + esc(s) + '</li>').join('') + '</ul>';
+  if (r.craft) h += '<h4>Code craft (unscored)</h4><p class="ev">' + esc(r.craft.summary || '') + (r.craft.payoff ? ' Payoff: ' + esc(r.craft.payoff) : '') + '</p>';
+  h += '<h4>Scores and evidence</h4><div class="scroll"><table><thead><tr><th>Subcriterion</th><th class="num">Points</th><th>Evidence</th></tr></thead><tbody>' + D.rubric.map(x => { const s = r.quality.sub[x.k]; return '<tr><td><b>' + x.k + '</b> ' + esc(x.label) + '</td><td class="num">' + (s.notVerified ? 'not verified' : s.pts + ' / ' + s.max) + '</td><td class="ev">' + esc(s.evidence) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  h += '<h4>Runtime</h4>' + kv([['Errors during checks', r.runtimeErrors != null ? String(r.runtimeErrors) : 'not recorded'], r.perf ? ['Performance', r.perf.trials.map(t => t.fps + ' FPS / p95 ' + t.p95IntervalMs + ' ms').join('; ') + '. Median ' + r.perf.median.fps + ' FPS, p95 ' + r.perf.median.p95IntervalMs + ' ms'] : ['Performance', 'not measured'], r.stab ? ['Interaction sequence', r.stab.fps + ' FPS, worst interval ' + r.stab.max + ' ms, ' + r.stab.over50 + ' over 50 ms'] : null, ...r.highlights.map(([k, v]) => [esc(k), esc(v)])]);
+  h += '<h4>Session</h4>' + kv([['Model / harness', '<span class="mono">' + esc(r.modelId) + '</span> · ' + esc(r.harness || 'unknown') + (r.tier ? ' · tier ' + esc(r.tier) : '') + (r.auth ? ' · ' + esc(r.auth) : '')], ['Effort', esc(r.effort.status) + ': ' + esc(r.effort.recorded) + (r.effort.reported ? ' (reported ' + esc(r.effort.reported) + ')' : '')], ['Attribution', esc(r.mixed)], ['Task start → first delivery', r.start ? esc(r.start) + ' → ' + esc(r.end) + ' (' + r.elapsedMin + ' min)' : NA()], ['Initial TTFT', l.ttft ? ttftLabel(r) + ' — ' + esc(l.ttft.def) : 'N/A — ' + esc(l.ttftNote || '')], ['First visible text', l.firstVisibleSec != null ? l.firstVisibleSec + ' s (' + esc(l.firstVisibleDef) + ')' : NA()], ['First write', l.firstWriteSec != null ? l.firstWriteSec + ' s' : NA()], ['Model/API time', l.modelApiSec != null ? l.modelApiSec + ' s (' + esc(l.modelApiDef) + ')' : NA()], ['Requests', String(r.requests.modelRequests ?? 'N/A') + (r.requests.auxiliary ? ' (' + esc(r.requests.auxiliary) + ')' : '')], ['Tool calls', 'model-level ' + (r.tools.modelLevel ?? 'N/A') + ', inner ' + (r.tools.inner ?? 'N/A') + ', failed ' + (r.tools.failed ?? 'N/A')], ['Tokens I / O / R', r.tok ? num(r.tok.I) + ' / ' + num(r.tok.O) + ' / ' + (num(r.tok.R) ?? 'N/A') : NA()], ['Workflow throughput', r.throughput != null ? r.throughput + ' output tokens per elapsed second (not decoder speed)' : NA()], ['Session cost', costFull(r) != null ? money(costFull(r), 4) + ' — ' + esc(basis(r)) + (c.apiScored != null ? '; scored attempt ' + money(c.apiScored, 4) : '') : 'N/A — ' + esc(c.note || '') + (c.lowerBound != null ? ' Partial lower bound ≥ ' + money(c.lowerBound, 4) : '')], ['Chat delivery', r.delivery.chatHasCode ? (r.delivery.identical ? 'code identical to file' : 'code differs from file (' + (r.delivery.netNonWhitespaceCharDiff ?? '?') + ' net non-whitespace chars)') : 'no code in final message']]);
+  h += '<h4>Provenance</h4>' + kv([['Folder', esc(r.folder)], ['SHA-256', '<span class="mono">' + esc(r.art.sha256 || '') + '</span>'], ['Sessions', r.sessions.map(s => '<span class="mono">' + esc(s.id) + '</span> (' + esc(s.role) + ')').join('<br>') || NA()], r.excluded.length ? ['Excluded sessions', r.excluded.map(e => '<span class="mono">' + esc(e.id) + '</span> ' + esc(e.model) + ': ' + esc(e.note)).join('<br>')] : null]);
+  $('#detail').innerHTML = h;
+}
+renderDetail();
+// method
+(function () {
+  const e = D.environment || {}; let h = '<p><b>Environment.</b> ' + esc([e.hardware, e.os, e.browser, e.renderer ? 'WebGL: ' + e.renderer + (e.software ? ' (software)' : ' (hardware)') : null, e.idleRafHz ? 'display ' + e.idleRafHz + ' Hz' : null].filter(Boolean).join('. ')) + '.</p>';
+  h += '<p><b>Rubric.</b> Frozen before any time, token or cost figure was computed (SHA-256 <span class="mono">' + esc(D.scoresFrozen.sha256) + '</span>, ' + esc(D.scoresFrozen.frozenAtUtc) + '). Differences of 2 points or less are a practical tie.</p>';
+  if (D.inventory.firstDeliveryPolicy) h += '<p><b>First delivery.</b> ' + esc(D.inventory.firstDeliveryPolicy) + '</p>';
+  for (const m of D.notes.method) h += '<p><b>' + esc(m.title) + '.</b> ' + esc(m.text) + '</p>';
+  if (D.notes.confounders.length) h += '<p><b>Confounders.</b></p><ul class="list">' + D.notes.confounders.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+  if (D.notes.limitations.length) h += '<p><b>Limitations.</b></p><ul class="list">' + D.notes.limitations.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+  h += '<p><b>Excluded candidates.</b> ' + D.inventory.excluded.map(x => esc(x.path) + ' — ' + esc(x.reason)).join('; ') + '.</p><p><b>Integrity.</b> Every submission file was hashed before and after evaluation (manifest/hashes-before.sha256, hashes-after.sha256).</p>';
+  $('#methodBody').innerHTML = h; $('#foot').textContent = 'Generated ' + D.generatedUtc + ' from metrics.json by modelbench. Files: report.md, metrics.json, leaderboard.csv, manifest/, evidence/.';
+})();
+// exports
+function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+$('#exportJson').addEventListener('click', () => download('modelbench.json', JSON.stringify(D, null, 2), 'application/json'));
+$('#exportCsv').addEventListener('click', () => { const head = ['rank','id','model','vendor','folder','quality','practical_tie','status','effort','elapsed_min','ttft_s','ttft_definition','session_cost_usd','cost_basis','scored_cost_usd','lower_bound_usd','input','output','reasoning','reasoning_pct_output','kib','lines','key_finding']; const rows = R.map(r => [r.rank, r.id, r.model, r.vendor, r.folder, r.quality.total, r.tie, r.quality.status, r.effort.status, r.elapsedMin ?? '', r.latency.ttft ? r.latency.ttft.ms / 1000 : '', r.latency.ttft ? r.latency.ttft.def : 'not recorded', costFull(r) ?? '', basis(r) ?? 'N/A', r.cost.apiScored ?? '', r.cost.lowerBound ?? '', r.tok ? r.tok.I : '', r.tok ? r.tok.O : '', r.tok ? r.tok.R ?? '' : '', r.tok ? r.tok.ro ?? '' : '', r.art.kib ?? '', r.art.physicalLines ?? '', r.key]); rows.push(['', '', 'Missing expected models: ' + (D.inventory.missing.join('; ') || 'none')]); download('modelbench-leaderboard.csv', [head].concat(rows).map(r => r.map(v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(',')).join('\n') + '\n', 'text/csv'); });
+</script>
+</body>
+</html>

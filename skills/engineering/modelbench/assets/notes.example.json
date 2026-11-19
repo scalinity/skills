@@ -1,0 +1,130 @@
+{
+  "meta": {
+    "title": "Nine black holes, one brief",
+    "lede": "Nine model-generated Three.js simulations of the same prompt, run on one machine, scored on a frozen 100-point rubric, then compared on elapsed time, tokens and session cost. Results describe these generations only.",
+    "subject": "Interactive 3D black hole simulation in a single index.html",
+    "reportedEffort": "xhigh",
+    "timezone": "America/New_York"
+  },
+  "expectedModels": [
+    "GPT-6.1 Sol",
+    "GPT-6.0 Astra / GPT-6 Astra",
+    "Gemini Neon",
+    "GPT-6.2 Sol",
+    "Claude Sonnet 5.5",
+    "Claude Opus 5.5",
+    "Gemini Hydrogen",
+    "GPT-6.2 Astra",
+    "Claude Fable 5.2"
+  ],
+  "missingModels": [],
+  "additionalModels": [],
+  "firstDeliveryPolicy": "Every session had one user task turn and no follow-ups; each graded file was last modified before its session completed.",
+  "views": [
+    {
+      "key": "default",
+      "label": "Desktop",
+      "caption": "Default camera, 5 s after load, 1440×900."
+    },
+    {
+      "key": "narrow",
+      "label": "Narrow",
+      "caption": "Narrow 390×844 after resize."
+    },
+    {
+      "key": "lowAngle",
+      "label": "Low angle",
+      "caption": "After a 60 px upward drag (near edge-on)."
+    },
+    {
+      "key": "belowPlane",
+      "label": "Below plane",
+      "caption": "After a second 60 px upward drag."
+    },
+    {
+      "key": "topDown",
+      "label": "Top-down",
+      "caption": "After a 700 px downward drag."
+    },
+    {
+      "key": "zoomIn",
+      "label": "Zoomed in",
+      "caption": "Paused, six wheel steps in."
+    },
+    {
+      "key": "massMin",
+      "label": "Mass min",
+      "caption": "Paused, mass slider at minimum."
+    },
+    {
+      "key": "massMax",
+      "label": "Mass max",
+      "caption": "Paused, mass slider at maximum."
+    }
+  ],
+  "showcaseView": "default",
+  "confounders": [
+    "The exhibit-3d skill sets effort: max; Claude Code honored it, so two Claude runs ran mostly at max instead of xhigh.",
+    "Harnesses, injected instructions, skills and output styles differed across vendors.",
+    "The evaluator (Claude Opus 5.5) shares a vendor with three submissions and is the same model as one."
+  ],
+  "limitations": [
+    "One generation per model; not a general ranking.",
+    "All runs saturated the 120 Hz display, so performance cannot rank GPU headroom.",
+    "No verified bills; Claude TTFT not recorded; Gemini input and cache accounting unverified."
+  ],
+  "method": [
+    {
+      "title": "Runtime checks",
+      "text": "Standardized gestures, slider min/default/max while paused, a 5 s pause with camera use, resume, narrow round trip; an in-page frame probe measured motion per frame."
+    },
+    {
+      "title": "Performance",
+      "text": "Three trials per run with order rotated, fresh load, 5 s warm-up after the first draw call, 20 s rAF monitor. Measures browser frame cadence, not GPU time."
+    }
+  ],
+  "runs": {
+    "S4": {
+      "display": "GPT-6.1 Sol",
+      "keyFinding": "Ray-marched lensing; thick over-bright disk; polished UI",
+      "strengths": [
+        "Velocity-Verlet ray march with a volumetric slab disk and Kepler-lane sparks; polished UI with readouts, info dialog, hide-UI and shortcuts; adaptive resolution and robust error messages."
+      ],
+      "findings": [
+        "Thick, puffy, near-white-clipped disk with a bulge below the shadow; background lensing deliberately localized and visually the weakest (A1–A3; still credited in C1)."
+      ],
+      "defects": {},
+      "runtimeHighlights": [
+        [
+          "Differential rotation",
+          "{\"moving\":2,\"inner\":[63,29.29],\"outer\":[86,19.03],\"ratio\":1.54,\"kepler\":1.59}"
+        ],
+        [
+          "Mass control",
+          "dark-pixel share default 4.38%, min 13.33%, max 36.62%"
+        ]
+      ]
+    },
+    "S7": {
+      "display": "GPT-6 Astra",
+      "keyFinding": "Ray-marched lensing; glare blob; best error handling",
+      "strengths": [
+        "Verlet ray march in horizon units; capture mask carried past bloom keeps the shadow black; most complete error handling and pagehide disposal."
+      ],
+      "findings": [
+        "Bloom glare blob at the upper right of the shadow and over-bright inner disk (A1–A3)."
+      ],
+      "defects": {},
+      "runtimeHighlights": [
+        [
+          "Differential rotation",
+          "{\"moving\":2,\"inner\":[66,9.35],\"outer\":[91,5.83],\"ratio\":1.6,\"kepler\":1.62}"
+        ],
+        [
+          "Mass control",
+          "dark-pixel share default 6.37%, min 28.88%, max 11.07%"
+        ]
+      ]
+    }
+  }
+}

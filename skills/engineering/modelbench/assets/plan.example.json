@@ -1,0 +1,290 @@
+{
+  "viewport": [
+    1440,
+    900
+  ],
+  "perf": {
+    "warmupMs": 5000,
+    "measureMs": 20000
+  },
+  "submissions": {
+    "S1": {
+      "folder": "Opus 5.5",
+      "entry": "index.html"
+    }
+  },
+  "controls": {
+    "S1": {
+      "mass": "#mass",
+      "speed": "#speed",
+      "pause": "#pause"
+    }
+  },
+  "phases": [
+    {
+      "name": "views",
+      "steps": [
+        {
+          "wait": 5000
+        },
+        {
+          "shot": "default"
+        },
+        {
+          "drag": [
+            720,
+            330,
+            0,
+            -60
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "lowAngle"
+        },
+        {
+          "drag": [
+            720,
+            330,
+            0,
+            -60
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "belowPlane"
+        },
+        {
+          "drag": [
+            720,
+            330,
+            0,
+            700
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "topDown"
+        },
+        {
+          "snaps": {
+            "count": 3,
+            "interval": 250
+          },
+          "as": "rotation"
+        }
+      ]
+    },
+    {
+      "name": "controls",
+      "steps": [
+        {
+          "wait": 4000
+        },
+        {
+          "click": "@pause"
+        },
+        {
+          "wait": 400
+        },
+        {
+          "state": "@pause",
+          "as": "paused"
+        },
+        {
+          "shot": "paused"
+        },
+        {
+          "wait": 5000
+        },
+        {
+          "shot": "paused5s"
+        },
+        {
+          "diff": [
+            "paused",
+            "paused5s"
+          ],
+          "as": "pauseHolds"
+        },
+        {
+          "drag": [
+            720,
+            330,
+            300,
+            0
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "pausedOrbit"
+        },
+        {
+          "set": [
+            "@mass",
+            "min"
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "massMin"
+        },
+        {
+          "set": [
+            "@mass",
+            "max"
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "massMax"
+        },
+        {
+          "set": [
+            "@mass",
+            "default"
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "shot": "massDefault"
+        },
+        {
+          "diff": [
+            "pausedOrbit",
+            "massDefault"
+          ],
+          "as": "massReversible"
+        },
+        {
+          "click": "@pause"
+        },
+        {
+          "set": [
+            "@speed",
+            "max"
+          ]
+        },
+        {
+          "wait": 1000
+        },
+        {
+          "probe": "start"
+        },
+        {
+          "wait": 1000
+        },
+        {
+          "probe": "stop",
+          "as": "speedMax"
+        },
+        {
+          "set": [
+            "@speed",
+            "min"
+          ]
+        },
+        {
+          "wait": 1000
+        },
+        {
+          "probe": "start"
+        },
+        {
+          "wait": 1000
+        },
+        {
+          "probe": "stop",
+          "as": "speedMin"
+        }
+      ]
+    },
+    {
+      "name": "narrow",
+      "steps": [
+        {
+          "wait": 3000
+        },
+        {
+          "viewport": [
+            390,
+            844
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "layout": "narrow"
+        },
+        {
+          "shot": "narrow"
+        },
+        {
+          "viewport": [
+            1440,
+            900
+          ]
+        },
+        {
+          "wait": 1500
+        },
+        {
+          "layout": "restored"
+        }
+      ]
+    },
+    {
+      "name": "timed",
+      "timed": true,
+      "steps": [
+        {
+          "wait": 4000
+        },
+        {
+          "monitor": "start"
+        },
+        {
+          "drag": [
+            720,
+            330,
+            300,
+            0
+          ]
+        },
+        {
+          "wheel": [
+            0,
+            -120
+          ],
+          "times": 6,
+          "at": [
+            720,
+            450
+          ]
+        },
+        {
+          "wait": 2000
+        },
+        {
+          "monitor": "stop",
+          "as": "interaction"
+        }
+      ]
+    }
+  ]
+}
